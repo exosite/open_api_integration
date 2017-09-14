@@ -1,30 +1,51 @@
 swagger: "2.0"
+
+################################################################################
+#                           Service Metadata                                   #
+################################################################################
 info:
-  version: v1
-  title: Service name
-  description: This is a minimal service definition for a Storage service with quota limitation.
+  version: 1.0
+  title: A Storage Service
+  description: |
+              This is a minimal definition for a Storage service.
+              Contains:
+                - Solution event lifecycle to create/clear solution namespace.
+                - Solution context id injected to operation parameter.
   contact:
     name: maintainer name
     email: maintainer@service.com # Used by Murano for service outage notification
+
 tags:
   - name:         keyword
-    description:  Murano use it to reference the service
+    description:  Description of the tag
 
+################################################################################
+#                            API Information                                   #
+################################################################################
 host: domain.of.your.service
 basePath: /
-x-healthPath: /health # this endpoint needs to return 2xx status code, if omitted "/" is used
+x-healthPath: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
 
-# Solution lifecycle management endpoints
+################################################################################
+#                          Solution lifecycle Events                           #
+################################################################################
+# Following Operation should generally be restricted with "x-internalUse: true"
 x-init: createSolution # Triggered by Murano when a solution is created
-x-info: getSolution # Triggered by Murano to get a solution information
+x-info: getSolution # Triggered by Murano to get a retrieve custom information
 x-update: updateSolution # Triggered by Murano when a solution is updated
 x-gc: delSolution # Triggered by Murano when a solution is removed
 
+################################################################################
+#                                Operations                                    #
+################################################################################
 paths:
-  # Murano Admin endpoint used for solution storage namespace management
+  # Administration endpoint used by Murano solution lifecycle events
+  # Those operation uses the "x-internalUse" to prevent the user to access them directly
   /{solution_id}:
     parameters:
       - name: solution_id
+        x-from: solution_id # Indicate this value is injected from the user solution_id
+        x-internalUse: true # Indicate the user cannot provide this parameter
         type: string
         in: path
         description: The solution identifier. Set automatically.
@@ -32,7 +53,7 @@ paths:
     post:
       description: Used by Murano to create a solution namespace.
       operationId: createSolution
-      x-internal-use: true # Indicate that this operation cannot be called from user scripts
+      x-internalUse: true # Indicate that this operation cannot be called from user scripts
       parameters:
         - name: settings
           in: body
@@ -46,16 +67,15 @@ paths:
     get:
       description: Used by Murano to get the solution settings.
       operationId: getSolution
-      x-internal-use: true
       responses:
         200:
-          description: Solution settings & usage
+          description: Solution settings
           schema:
             $ref: "#/definitions/SolutionInfo"
     put:
       description: Used by Murano to update the solution settings.
       operationId: updateSolution
-      x-internal-use: true
+      x-internalUse: true
       parameters:
         - name: settings
           in: body
@@ -69,37 +89,62 @@ paths:
     delete:
       description: Used by Murano to remove a solution and clean its namespace.
       operationId: delSolution
-      x-internal-use: true
+      x-internalUse: true
       responses:
         204:
           description: Solution successfully removed.
 
-  # Service operations
+  # Service operations available from scripting
   /{solution_id}/data:
     parameters:
       - name: solution_id
         type: string
         in: path
         description: The solution identifier. Set automatically by Murano at service call.
-        x-internal-use: true # Indicate that this parameters cannot be used from user scripts
+        x-from: solution_id # Indicate this value is injected from the user solution_id
+        x-internalUse: true # Indicate the user cannot provide this parameter
         required: true
     post:
       description: Save data to the solution namespace.
       operationId: setData
+      x-example: |
+                local params = {
+                  data = "hello"
+                }
+                local result = Storageservice.setData(params)
+      parameters:
+        - name: body
+          in: body
+          description: Data to save.
+          required: true
+          schema:
+            $ref: "#/definitions/Body"
       responses:
         201:
-          description: Solution successfully created
+          description: Data successfully saved
     get:
       description: Retrieve data from the solution namespace.
       operationId: getData
+      x-example: |
+                local result = Storageservice.getData() -- return hello
       responses:
         200:
           description: Successfully returned the solution data
           schema:
-            description: The solution data
-            type: string
+            $ref: "#/definitions/Body"
 
+################################################################################
+#                                 Definitions                                  #
+################################################################################
 definitions:
+  Body:
+    type: object
+    description: Request payload
+    properties:
+      data:
+        type: string
+        description: Data saved in the storage
+
   Quota:
     type: object
     description: This object contains numeral metrics limitation.
@@ -128,4 +173,3 @@ definitions:
           metricName:
             type: integer
             description: The current usage of the service.
-

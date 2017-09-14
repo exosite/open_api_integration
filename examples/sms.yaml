@@ -1,19 +1,28 @@
 swagger:  "2.0"
 
 ################################################################################
-#                              API Information                                 #
+#                           Service Metadata                                   #
 ################################################################################
 info:
   version:      1.0.0
   title:        SMS Service
-  description:  Send SMS notifications with this Some gateway service.
+  description: |
+                Send SMS notifications with this Some gateway service.
+                Contains:
+                  - Service Configuration parameters
+                  - Security Definition usage
+                  - Credential configuration & injection
   contact:
     name:       maintainer name
     email:      maintainer@service.com
-# documentation
+
 externalDocs:
   description:  Service Provider documentation
   url:          https://www.somesms.com/docs/api/rest
+
+################################################################################
+#                            API Information                                   #
+################################################################################
 host:     api.sms.com
 basePath: /
 schemes:
@@ -26,8 +35,7 @@ produces:
 ################################################################################
 #                      Service Configuration Parameters                        #
 ################################################################################
-
-x-config-parameters:
+x-configParameters:
   - name:         AccountSid
     description:  Service Account SID
     type:         string
@@ -45,24 +53,23 @@ securityDefinitions:
   basicAuth:
     type: basic
     description: HTTP basic header
-    x-user-field: AccountSid
-    x-secret-field: AuthToken
+    x-userField: AccountSid # Name of the parameter to use as user
+    x-secretField: AuthToken # Name of the parameter to use as secret
 security:
   - basicAuth: []
 
 ################################################################################
-#                                    Paths                                     #
+#                                Operations                                    #
 ################################################################################
 paths:
-  /Accounts/{AccountSid}/Messages.json:
+  /accounts/{AccountSid}/messages.json:
     parameters:
-      - name:         AccountSid
-        in:           path
+      - name:         AccountSid # Matches the parameter defined in "x-configParameters"
         description:  Account Sid
+        in:           path
         type:         string
         required:     true
-        pattern:      ^[0-9a-zA-Z]{34}$
-        x-internal-use: true
+        x-internalUse: true # Indicate the Scripting call cannot overload this parameter
     post:
       tags:
         - messages
@@ -77,8 +84,6 @@ paths:
                       To = "+17635551234",
                       Body = "Your device is in an error state."
                     })
-
-                    response.message = out
       parameters:
         - name:         message
           in:           body
