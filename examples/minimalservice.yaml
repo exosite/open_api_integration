@@ -1,24 +1,37 @@
 swagger: "2.0"
+
+################################################################################
+#                           Service Metadata                                   #
+################################################################################
 info:
-  version: v1
+  version: 1.0
   title: My service name
   description: A full description of the service. Can contain HTML tags.
   contact:
     name: maintainer name
     email: maintainer@murano.com
 
+################################################################################
+#                            API Information                                   #
+################################################################################
 host: domain.of.your.service
 basePath: /
-x-healthPath: /health # this endpoint needs to return 2xx status code, if omitted "/" is used
+x-healthPath: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
 
+################################################################################
+#                                Operations                                    #
+################################################################################
 paths:
- /operation:
-   get:
-       description: At least one operation is required.
-       operationId: myOperation
-       responses:
-         200:
-           description: Return the operation result
-           schema:
-             description: Operation results
-             type: string
+  /operation:
+    get:
+      description: At least one operation is required.
+      operationId: myOperation # Used as Scripting function call
+      x-example: | -- A valid script example
+
+                  local result = MinimalService.myOperation()
+      responses:
+        200: # Http status code is not returned to the scripting result
+          description: Return the operation result
+          schema:
+            description: Operation results
+            type: string
