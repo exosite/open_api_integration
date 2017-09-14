@@ -1,0 +1,24 @@
+swagger: "2.0"
+info:
+  version: v1
+  title: My service name
+  description: A full description of the service. Can contain HTML tags.
+  contact:
+    name: maintainer name
+    email: maintainer@murano.com
+
+host: domain.of.your.service
+basePath: /
+x-healthPath: /health # this endpoint needs to return 2xx status code, if omitted "/" is used
+
+paths:
+ /operation:
+   get:
+       description: At least one operation is required.
+       operationId: myOperation
+       responses:
+         200:
+           description: Return the operation result
+           schema:
+             description: Operation results
+             type: string

@@ -1,0 +1,185 @@
+swagger:  "2.0"
+
+################################################################################
+#                              API Information                                 #
+################################################################################
+info:
+  version:      1.0.0
+  title:        SMS Service
+  description:  Send SMS notifications with this Some gateway service.
+  contact:
+    name:       maintainer name
+    email:      maintainer@service.com
+# documentation
+externalDocs:
+  description:  Service Provider documentation
+  url:          https://www.somesms.com/docs/api/rest
+host:     api.sms.com
+basePath: /
+schemes:
+  - https
+consumes:
+  - application/x-www-form-urlencoded
+produces:
+  - application/json
+
+################################################################################
+#                      Service Configuration Parameters                        #
+################################################################################
+
+x-config-parameters:
+  - name:         AccountSid
+    description:  Service Account SID
+    type:         string
+    required:     true
+    pattern:      ^[0-9a-zA-Z]{34}$
+  - name:         AuthToken
+    description:  Authentication Token
+    type:         string
+    required:     true
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+securityDefinitions:
+  basicAuth:
+    type: basic
+    description: HTTP basic header
+    x-user-field: AccountSid
+    x-secret-field: AuthToken
+security:
+  - basicAuth: []
+
+################################################################################
+#                                    Paths                                     #
+################################################################################
+paths:
+  /Accounts/{AccountSid}/Messages.json:
+    parameters:
+      - name:         AccountSid
+        in:           path
+        description:  Account Sid
+        type:         string
+        required:     true
+        pattern:      ^[0-9a-zA-Z]{34}$
+        x-internal-use: true
+    post:
+      tags:
+        - messages
+      operationId:  postMessage
+      summary:      send a SMS message
+      description:  Send a SMS message
+      x-example:    >
+                    -- send a SMS message to a phone number
+
+                    local out = Sms.postMessage({
+                      From = "+16125550923",
+                      To = "+17635551234",
+                      Body = "Your device is in an error state."
+                    })
+
+                    response.message = out
+      parameters:
+        - name:         message
+          in:           body
+          description:  The Message data.
+          required:     true
+          schema:
+            $ref:       "#/definitions/MessageCreation"
+      responses:
+        "200":
+          description:  message posted
+          schema:
+            $ref:   "#/definitions/Message"
+        default:
+          description: error
+          schema:
+            $ref:   "#/definitions/ErrorResponse"
+
+################################################################################
+#                                 Definitions                                  #
+################################################################################
+
+definitions:
+  MessageCreation:
+    description: The creation of a SMS message
+    type: object
+    properties:
+      To:
+        description:  The destination phone number. Format with a "+" and country code e.g., +16175551212 (E.164 format).
+        type: string
+        format: E.164
+        pattern: ^\+[0-9]+$
+      From:
+        description: A phone number (in E.164 format) or alphanumeric sender ID enabled for the type of message you wish to send
+        type: string
+        format: E.164
+        pattern: ^(\+[0-9]+|[0-9a-zA-Z]+)$
+      Body:
+        description:  The text of the message you want to send, limited to 1600 characters.
+        type: string
+        maxLength: 1600
+    required: [ To, From, Body]
+
+  Message:
+    description: The SMS message
+    type: object
+    properties:
+      sid:
+        description:  A 34 character string that uniquely identifies this resource.
+        type: string
+        pattern: ^[0-9a-zA-Z]{34}$
+      date_created:
+        description:  The date that this resource was created, given in RFC 2822 format.
+        type: string
+        format: date
+      date_updated:
+        description:  The date that this resource was last updated, given in RFC 2822 format.
+        type: string
+        format: date
+      date_sent:
+        description: The date that the message was sent or received, given in RFC 2822 format.
+        type: string
+        format: date
+      account_sid:
+        description:  The 34 character unique ID of the Messaging Service you want to associate with this Message.
+        type: string
+        pattern: ^[0-9a-zA-Z]{34}$
+      from:
+        description: A Twilio phone number (in E.164 format) or alphanumeric sender ID enabled for the type of message you wish to send
+        type: string
+        format: E.164
+        pattern: ^(\+[0-9]+|[0-9a-zA-Z]+)$
+      to:
+        description:  The destination phone number. Format with a '+' and country code e.g., +16175551212 (E.164 format).
+        type: string
+        format: E.164
+        pattern: ^\+[0-9]+$
+      body:
+        description:  The text of the message you want to send, limited to 1600 characters.
+        type: string
+        maxLength: 1600
+      status:
+        description: The status of this message.
+        type: string
+        enum: [accepted, queued, sending, sent, failed, delivered, undelivered, receiving, received]
+      error_code:
+        description: The error code, if any, associated with your message. If your message status is failed or undelivered, the ErrorCode can give you more information about the failure.
+        type: string
+      error_message:
+        description: The human readable description of the ErrorCode above.
+        type: string
+
+  ErrorResponse:
+    description: Request error
+    type: object
+    properties:
+      error:
+        type: string
+        description: Error message
+      status:
+        type: integer
+        description: Response code
+      type:
+        type: string
+        description: Error type
