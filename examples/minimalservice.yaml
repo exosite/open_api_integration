@@ -16,7 +16,7 @@ info:
 ################################################################################
 host: domain.of.your.service
 basePath: /
-x-healthPath: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
+x-exosite-health-path: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
 
 ################################################################################
 #                                Operations                                    #
@@ -26,7 +26,7 @@ paths:
     get:
       description: At least one operation is required.
       operationId: myOperation # Used as Scripting function call
-      x-example: | -- A valid script example
+      x-exosite-example: | -- A valid script example
 
                   local result = MinimalService.myOperation()
       responses:

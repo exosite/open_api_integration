@@ -35,7 +35,7 @@ produces:
 ################################################################################
 #                      Service Configuration Parameters                        #
 ################################################################################
-x-configParameters:
+x-exosite-config-parameters:
   - name:         AccountSid
     description:  Service Account SID
     type:         string
@@ -53,8 +53,8 @@ securityDefinitions:
   basicAuth:
     type: basic
     description: HTTP basic header
-    x-userField: AccountSid # Name of the parameter to use as user
-    x-secretField: AuthToken # Name of the parameter to use as secret
+    x-exosite-user-field: AccountSid # Name of the parameter to use as user
+    x-exosite-secret-field: AuthToken # Name of the parameter to use as secret
 security:
   - basicAuth: []
 
@@ -64,19 +64,19 @@ security:
 paths:
   /accounts/{AccountSid}/messages.json:
     parameters:
-      - name:         AccountSid # Matches the parameter defined in "x-configParameters"
+      - name:         AccountSid # Matches the parameter defined in "x-exosite-config-parameters"
         description:  Account Sid
         in:           path
         type:         string
         required:     true
-        x-internalUse: true # Indicate the Scripting call cannot overload this parameter
+        x-exosite-internal-use: true # Indicate the Scripting call cannot overload this parameter
     post:
       tags:
         - messages
       operationId:  postMessage
       summary:      send a SMS message
       description:  Send a SMS message
-      x-example:    >
+      x-exosite-example:    >
                     -- send a SMS message to a phone number
 
                     local out = Sms.postMessage({

@@ -24,28 +24,28 @@ tags:
 ################################################################################
 host: domain.of.your.service
 basePath: /
-x-healthPath: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
+x-health-path: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
 
 ################################################################################
 #                          Solution lifecycle Events                           #
 ################################################################################
-# Following Operation should generally be restricted with "x-internalUse: true"
-x-init: createSolution # Triggered by Murano when a solution is created
-x-info: getSolution # Triggered by Murano to get a retrieve custom information
-x-update: updateSolution # Triggered by Murano when a solution is updated
-x-gc: delSolution # Triggered by Murano when a solution is removed
+# Following Operation should generally be restricted with "x-exosite-internal-use: true"
+x-exosite-init: createSolution # Triggered by Murano when a solution is created
+x-exosite-info: getSolution # Triggered by Murano to get a retrieve custom information
+x-exosite-update: updateSolution # Triggered by Murano when a solution is updated
+x-exosite-gc: delSolution # Triggered by Murano when a solution is removed
 
 ################################################################################
 #                                Operations                                    #
 ################################################################################
 paths:
   # Administration endpoint used by Murano solution lifecycle events
-  # Those operation uses the "x-internalUse" to prevent the user to access them directly
+  # Those operation uses the "x-internal-use" to prevent the user to access them directly
   /{solution_id}:
     parameters:
       - name: solution_id
-        x-from: solution_id # Indicate this value is injected from the user solution_id
-        x-internalUse: true # Indicate the user cannot provide this parameter
+        x-exosite-from: solution_id # Indicate this value is injected from the user solution_id
+        x-exosite-internalUse: true # Indicate the user cannot provide this parameter
         type: string
         in: path
         description: The solution identifier. Set automatically.
@@ -53,7 +53,7 @@ paths:
     post:
       description: Used by Murano to create a solution namespace.
       operationId: createSolution
-      x-internalUse: true # Indicate that this operation cannot be called from user scripts
+      x-exosite-internal-use: true # Indicate that this operation cannot be called from user scripts
       parameters:
         - name: settings
           in: body
@@ -75,7 +75,7 @@ paths:
     put:
       description: Used by Murano to update the solution settings.
       operationId: updateSolution
-      x-internalUse: true
+      x-exosite-internal-use: true
       parameters:
         - name: settings
           in: body
@@ -89,7 +89,7 @@ paths:
     delete:
       description: Used by Murano to remove a solution and clean its namespace.
       operationId: delSolution
-      x-internalUse: true
+      x-exosite-internal-use: true
       responses:
         204:
           description: Solution successfully removed.
@@ -101,13 +101,13 @@ paths:
         type: string
         in: path
         description: The solution identifier. Set automatically by Murano at service call.
-        x-from: solution_id # Indicate this value is injected from the user solution_id
-        x-internalUse: true # Indicate the user cannot provide this parameter
+        x-exosite-from: solution_id # Indicate this value is injected from the user solution_id
+        x-exosite-internal-use: true # Indicate the user cannot provide this parameter
         required: true
     post:
       description: Save data to the solution namespace.
       operationId: setData
-      x-example: |
+      x-exosite-example: |
                 local params = {
                   data = "hello"
                 }
@@ -125,7 +125,7 @@ paths:
     get:
       description: Retrieve data from the solution namespace.
       operationId: getData
-      x-example: |
+      x-exosite-example: |
                 local result = Storageservice.getData() -- return hello
       responses:
         200:
