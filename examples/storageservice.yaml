@@ -30,10 +30,10 @@ x-health-path: /health # This endpoint needs to return 2xx status code. If omitt
 #                          Solution lifecycle Events                           #
 ################################################################################
 # Following Operation should generally be restricted with "x-exosite-internal-use: true"
-x-exosite-init: createSolution # Triggered by Murano when a solution is created
-x-exosite-info: getSolution # Triggered by Murano to get a retrieve custom information
-x-exosite-update: updateSolution # Triggered by Murano when a solution is updated
-x-exosite-gc: delSolution # Triggered by Murano when a solution is removed
+x-exosite-init: createSolution # Triggered by Murano when this service is enabled in a solution
+x-exosite-info: getSolution # Triggered by Murano to retrieve custom information about the service solution namespace
+x-exosite-update: updateSolution # Triggered by Murano when the solution service configuration is updated
+x-exosite-gc: delSolution # Triggered by Murano when the service is removed from a solution or if the solution is deleted
 
 ################################################################################
 #                                Operations                                    #
