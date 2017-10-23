@@ -36,6 +36,14 @@ x-exosite-update: updateSolution # Triggered by Murano when the solution service
 x-exosite-gc: delSolution # Triggered by Murano when the service is removed from a solution or if the solution is deleted
 
 ################################################################################
+#                      Service Configuration Parameters                        #
+################################################################################
+x-exosite-config-parameters:
+  - name:         configurationParameter
+    $ref:         "#/definitions/ConfigurationParameter"
+    required:     true # Indicates this parameter is required during configuration
+
+################################################################################
 #                                Operations                                    #
 ################################################################################
 paths:
@@ -145,31 +153,24 @@ definitions:
         type: string
         description: Data saved in the storage
 
-  Quota:
-    type: object
-    description: This object contains numeral metrics limitation.
-    properties:
-      metricName:
-        type: integer
-        description: This is a metric used to limit the service usage for a solution.
+  ConfigurationParameter:
+    type: string
+    description: This is a mandatory parameter for the service to be usable.
 
   SolutionSettings:
     description: The service settings for a solution.
     type: object
     properties:
-      quota:
-        $ref: "#/definitions/Quota"
+      configurationParameter:
+        $ref: "#/definitions/ConfigurationParameter"
+    required: [configurationParameter]
 
   SolutionInfo:
-    description: The service settings & usage for a solution.
+    description: The service settings & information for a solution.
     type: object
     properties:
-      quota:
-        $ref: "#/definitions/Quota"
-      usage:
+      configurationParameter:
+        $ref: "#/definitions/ConfigurationParameter"
+      additionalInfo:
         type: object
-        description: This object contains numeral metrics usage for a given solution.
-        properties:
-          metricName:
-            type: integer
-            description: The current usage of the service.
+        description: Some additional information from the service used for display purpose
