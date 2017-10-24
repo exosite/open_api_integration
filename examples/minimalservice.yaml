@@ -4,7 +4,7 @@ swagger: "2.0"
 #                           Service Metadata                                   #
 ################################################################################
 info:
-  version: 1.0
+  version: "1.0"
   title: My service name
   description: A full description of the service. Can contain HTML tags.
   contact:
