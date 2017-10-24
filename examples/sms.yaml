@@ -4,7 +4,7 @@ swagger:  "2.0"
 #                           Service Metadata                                   #
 ################################################################################
 info:
-  version:      1.0.0
+  version:      "1.0.0"
   title:        SMS Service
   description: |
                 Send SMS notifications with this Some gateway service.
