@@ -4,7 +4,7 @@ swagger: "2.0"
 #                           Service Metadata                                   #
 ################################################################################
 info:
-  version: 1.0
+  version: "1.0"
   title: A Storage Service
   description: |
               This is a minimal definition for a Storage service.
