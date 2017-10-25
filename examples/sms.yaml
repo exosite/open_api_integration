@@ -33,15 +33,17 @@ produces:
 ################################################################################
 #                      Service Configuration Parameters                        #
 ################################################################################
-x-exosite-config-parameters:
-  - name:         AccountSid
-    description:  Service Account SID
-    type:         string
-    required:     true
-  - name:         AuthToken
-    description:  Authentication Token
-    type:         string
-    required:     true
+x-exosite-config:
+  parameters:
+    AccountSid:
+      title:        Account Sid
+      description:  More information about the Service Account SID
+      type:         string
+    AuthToken:
+      title:        Authentication Token
+      description:  More information about the Authentication Token
+      type:         string
+  required: [AccountSid, AuthToken]
 
 ################################################################################
 #                                  Security                                    #
