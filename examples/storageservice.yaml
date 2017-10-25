@@ -35,7 +35,8 @@ x-exosite-gc: delSolution # Triggered by Murano when the service is removed from
 ################################################################################
 x-exosite-config-parameters:
   - name:         configurationParameter
-    $ref:         "#/definitions/ConfigurationParameter"
+    type: string
+    description: This is a mandatory parameter for the service to be usable.
     required:     true # Indicates this parameter is required during configuration
 
 ################################################################################
