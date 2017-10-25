@@ -13,18 +13,13 @@ info:
                 - Solution context id injected to operation parameter.
   contact:
     name: maintainer name
-    email: maintainer@service.com # Used by Murano for service outage notification
-
-tags:
-  - name:         keyword
-    description:  Description of the tag
+    email: maintainer@email.com
 
 ################################################################################
 #                            API Information                                   #
 ################################################################################
 host: domain.of.your.service
 basePath: /
-x-health-path: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
 
 ################################################################################
 #                          Solution lifecycle Events                           #
@@ -48,12 +43,12 @@ x-exosite-config-parameters:
 ################################################################################
 paths:
   # Administration endpoint used by Murano solution lifecycle events
-  # Those operation uses the "x-internal-use" to prevent the user to access them directly
+  # Those operation uses the "x-exosite-internal-use" to prevent the user to access them directly
   /{solution_id}:
     parameters:
       - name: solution_id
         x-exosite-from: solution_id # Indicate this value is injected from the user solution_id
-        x-exosite-internalUse: true # Indicate the user cannot provide this parameter
+        x-exosite-internal-use: true # Indicate the user cannot provide this parameter
         type: string
         in: path
         description: The solution identifier. Set automatically.
@@ -70,13 +65,13 @@ paths:
           schema:
             $ref: "#/definitions/SolutionSettings"
       responses:
-        201:
+        default:
           description: Solution successfully created
     get:
       description: Used by Murano to get the solution settings.
       operationId: getSolution
       responses:
-        200:
+        default:
           description: Solution settings
           schema:
             $ref: "#/definitions/SolutionInfo"
@@ -92,14 +87,14 @@ paths:
           schema:
             $ref: "#/definitions/SolutionSettings"
       responses:
-        204:
+        default:
           description: Settings updated
     delete:
       description: Used by Murano to remove a solution and clean its namespace.
       operationId: delSolution
       x-exosite-internal-use: true
       responses:
-        204:
+        default:
           description: Solution successfully removed.
 
   # Service operations available from scripting
@@ -128,7 +123,7 @@ paths:
           schema:
             $ref: "#/definitions/Body"
       responses:
-        201:
+        default:
           description: Data successfully saved
     get:
       description: Retrieve data from the solution namespace.
@@ -136,7 +131,7 @@ paths:
       x-exosite-example: |
                 local result = Storageservice.getData() -- return hello
       responses:
-        200:
+        default:
           description: Successfully returned the solution data
           schema:
             $ref: "#/definitions/Body"
