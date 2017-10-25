@@ -11,10 +11,10 @@ info:
                 Contains:
                   - Service Configuration parameters
                   - Security Definition usage
-                  - Credential configuration & injection
+                  - Credential: Basic auth
   contact:
     name:       maintainer name
-    email:      maintainer@service.com
+    email:      maintainer@email.com
 
 externalDocs:
   description:  Service Provider documentation
@@ -25,8 +25,6 @@ externalDocs:
 ################################################################################
 host:     api.sms.com
 basePath: /
-schemes:
-  - https
 consumes:
   - application/x-www-form-urlencoded
 produces:
@@ -40,7 +38,6 @@ x-exosite-config-parameters:
     description:  Service Account SID
     type:         string
     required:     true
-    pattern:      ^[0-9a-zA-Z]{34}$
   - name:         AuthToken
     description:  Authentication Token
     type:         string
@@ -53,8 +50,8 @@ securityDefinitions:
   basicAuth:
     type: basic
     description: HTTP basic header
-    x-exosite-user-field: AccountSid # Name of the parameter to use as user
-    x-exosite-secret-field: AuthToken # Name of the parameter to use as secret
+    x-exosite-user-field: AccountSid # Name of the parameter containing the user account name
+    x-exosite-secret-field: AuthToken # Name of the parameter containing the user password
 security:
   - basicAuth: []
 
