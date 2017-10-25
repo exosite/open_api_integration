@@ -6,10 +6,10 @@ swagger: "2.0"
 info:
   version: "1.0"
   title: My service name
-  description: A full description of the service. Can contain HTML tags.
+  description: A full description of the service. Can contain MD tags.
   contact:
     name: maintainer name
-    email: maintainer@murano.com
+    email: maintainer@email.com
 
 ################################################################################
 #                            API Information                                   #
@@ -30,8 +30,8 @@ paths:
 
                   local result = MinimalService.myOperation()
       responses:
-        200: # Http status code is not returned to the scripting result
+        default: # Http status code is not returned to the scripting result
           description: Return the operation result
           schema:
-            description: Operation results
+            description: Operation result structure
             type: string
