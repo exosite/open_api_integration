@@ -16,7 +16,7 @@ This is a simple service definition with x-exosite-health-path and x-exosite-exa
 Link: [minimalservice.yaml](examples/minimalservice.yaml)
 
 #### Example 2: Storage Service
-This is a minimal service definition for a Storage service with quota limitation. It shows up how to use the x-exosite-health-path, x-exosite-init, x-exosite-info, x-exosite-update, x-exosite-gc, x-exosite-from and x-exosite-internal-use fields.
+This is a minimal service definition for a Storage service with custom configuration settings. It demonstrates how to use of the solution lifecycle event: x-exosite-init, x-exosite-info, x-exosite-update & x-exosite-gc.
 
 Link: [storageservice.yaml](examples/storageservice.yaml)
 
@@ -35,12 +35,12 @@ If your web service API implementation is not done yet, have a look to [the vari
 Otherwise start building your yaml file in your favorite code editor. You may consider using the [swagger online editor](https://editor.swagger.io/) to help you get started.
 
 #### Step 2: Murano Required Fields
-Once you have a valid swagger description, take the time to go through this document to make sure all required fields and section are filled up, including in the nested structures. (e.g. swagger, info, host, paths, etc).
+Once you have a valid swagger description, take the time to go through this document to make sure all required fields and section as described in [Schema Definition](#schema-definition), including in the nested structures. (e.g. swagger, info, host, paths, etc).
 
 #### Step 3: Murano Custom Fields
-Murano provides several swagger extension tag, it is time to review them and see if your service usage scenario requires them. (e.g. x-exosite-example, x-exosite-init, x-exosite-health-path and so on.)
+Murano provides several swagger extension tag, it is time to review them and see if your service usage scenario requires them. (e.g. [x-exosite-example, x-exosite-init, x-exosite-health-path and so on](#schema-definition).)
 
-#### Step 4: Describe your
+#### Step 4: Describe Your Service
 The Swagger file is the documentation available to your user. Make sure it is fully document. In particular the `description` field is always required in any nested structure. See the [Service Documentation](#service-documentation) chapter.
 
 ### Service Documentation
@@ -86,8 +86,8 @@ Make some examples:
 |---------------------|-----------|-----------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | basePath            | string    | `'/'`                                                                                                                                     | Concatenated to host by Murano for service calls                                                                                                                                                                                                                                                                                                           |
 | schemes             | [`https`] | [`'https'`]                                                                                                                               | Used by Murano for service calls along with host & basePath. **Must be https**.                                                                                                                                                                                                                                                                            |
-| consumes            | [string]  | [`'application/json'`]                                                                                                                    | A list of MIME types the APIs can consume. **So far only application/json and application/x-www-form-urlencoded is supported**.                                                                                                                                                                                                                            |
-| produces            | [string]  | [`'application/json'`]                                                                                                                    | A list of MIME types the APIs can produce. **So far only application/json and application/x-www-form-urlencoded is supported**.                                                                                                                                                                                                                            |
+| consumes            | [string]  | [`'application/json'`]                                                                                                                    | A list of MIME types the APIs can consume. Currently **only 'application/json'** (default) and **'application/x-www-form-urlencoded' is supported**.                                                                                                                                                                                                                            |
+| produces            | [string]  | [`'application/json'`]                                                                                                                    | A list of MIME types the APIs can produce. Currently **only 'application/json' (default) is supported**.                                                                                                                                                                                                                            |
 | definitions         | object    | [`Definitions Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#definitionsObject)                      | An object to hold data types produced and consumed by operations.                                                                                                                                                                                                                                                                                          |
 | parameters          | object    | [`Parameters Definitions Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#parametersDefinitionsObject) | An object to hold parameters that can be used across operations. This property does not define global parameters for all operations.                                                                                                                                                                                                                       |
 | responses           | object    | [`Responses Definitions Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#responsesDefinitionsObject)   | Expected results of the service calls.                                                                                                                                                                                                                                                                                                                     |
@@ -111,7 +111,7 @@ contact:
 license:
   name: Apache 2.0
   url: http://www.apache.org/licenses/LICENSE-2.0.html
-version: 1.0.1
+version: "1.0.1"
 ```
 
 ##### Required Fields
@@ -193,7 +193,7 @@ parameters:
 
 | Field Pattern | Type     | Example                                                                                                                                                  | Description                                                                                                                                                                                                                                                          |
 |---------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| $ref          | string   | `'#/definitions/Pet'`                                                                                                                                    | Allows for an external definition of this path item. The referenced structure MUST be in the format of a [Path Item Object](#path-item-object). If there are conflicts between the referenced definition and this Path Item's definition, the behavior is undefined. |
+| $ref          | string   | `'#/definitions/Pet'`                                                                                                                                    | Allows for an external definition of this path item. The referenced structure MUST be in the format of a [Path Item Object](#path-item-object). If there are conflicts between the referenced definition and this Path Item's definition, the Path Item’s definition prevails. |
 | get           | object   | [`Operation Object`](#operation-object)                                                                                                                  | A definition of a GET operation on this path.                                                                                                                                                                                                                        |
 | put           | object   | [`Operation Object`](#operation-object)                                                                                                                  | A definition of a PUT operation on this path.                                                                                                                                                                                                                        |
 | post          | object   | [`Operation Object`](#operation-object)                                                                                                                  | A definition of a POST operation on this path.                                                                                                                                                                                                                       |
@@ -255,16 +255,16 @@ x-exosite-internal-use: false
 |-------------|----------|----------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | operationId | string   | `'myfunction'`                                                                                                                                           | Service operation reference, must be unique within the service. Used by in Lua script along with service Alias to make service calls.Eg. Servicealias.myfunction(parameters) |
 | description | string   | `Something description`                                                                                                                                  | A verbose explanation of the operation behavior. Used in the documentation.                                                                                                  |
-| parameters  | [object] | [[`Parameter Object`](#parameter-object) / [`Reference Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#referenceObject)] | Operation specific parameters.<br>**Important**: At least one of path parameters or operation parameters is required.                                                        |
-| responses   | object   | [`Responses Object`](#responses-object)                                                                                                                  | Expected results of the service calls.                                                                                                                                       |
+| parameters  | [object] | [[`Parameter Object`](#parameter-object) / [`Reference Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#referenceObject)] | Operation specific parameters.                                                        |
+| responses   | object   | [`Responses Object`](#responses-object)                                                                                                                  | Expected results of the service calls.<br>At least one response type is required.                                                                                                                                       |
 
 ##### Murano Specific Fields(Optional)
 
 | Field name             | Type        | Example                                                                                                                                                       | Description                                                                                                                                                                                          |
 |------------------------|-------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | x-exosite-hidden       | boolean     | `false`                                                                                                                                                       | If set to *true*: hide this operation from documentation.                                                                                                                                            |
-| x-exosite-internal-use | boolean     | `false`                                                                                                                                                       | If set to true: prevent this operation to be available from Lua scripting.<br><br>For example, this option is used to restrict life-cycle operations like initialize or delete the user namespace.   |
-| x-exosite-example      | string: Lua | `-- Example of Lua`<br>`script using the Operation`<br><br>`local parameters = {myparameter = "value"}`<br>`Local result = Myservice.myoperation(parameters)` | Provide an example of the usage of the operation call.<br>This requires to be a value Lua script.<br><br>**Important**: A known bug requires to put a double return carriage after each Lua comment. |
+| x-exosite-internal-use | boolean     | `false`                                                                                                                                                       | If set to true: prevent this operation from being exposed in Lua scripting<br><br>For example, this option is used to restrict life-cycle operations like initialize or delete the user namespace.   |
+| x-exosite-example      | string: Lua | `-- Example of Lua`<br>`script using the Operation`<br><br>`local parameters = {myparameter = "value"}`<br>`Local result = Myservice.myoperation(parameters)` | Provide an example of the usage of the operation call.<br>The value is required to be a valid Lua script string.<br><br>**Important**: A known bug requires to put a double return carriage after each Lua comment. |
 
 #### Parameter Object
 Describes a single operation parameter. Reference: official [Parameter Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#parameterObject) documentation.
@@ -322,7 +322,7 @@ items:
 
 | Field name  | Type   | Example                 | Description                                                                                                                                                                                                         |
 |-------------|--------|-------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| name        | string | `id`                    | The name of the parameter as provided from Lua scripting. Used by Murano for building service calls requests.<br>**Important**: Must be unique per operation, mind path & operation parameters collision.           |
+| name        | string | `id`                    | The name of the parameter as provided from Lua scripting. Used by Murano for building service calls requests.<br>**Important**: Must be unique per operation. Keep in mind potential Path, Security and Operation parameters collision.           |
 | in          | string | `path`                  | The location of the parameter. Possible values are "query", "header", "path" or "body". Used by Murano to build the service calls http requests.<br>**Important**: "formData" is currently not supported by Murano. |
 | description | string | `Something description` | A description of the parameter.                                                                                                                                                                                     |
 
@@ -332,7 +332,7 @@ items:
 |----------------------------------|------------------------------------|--------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | x-exosite-hidden                 | boolean                            | `false`                              | If set to *true*: hide this parameter from documentation.                                                                                                                                                                                                                                                                                                                        |
 | x-exosite-internal-use           | boolean                            | `false`                              | If set to true: prevent this parameter to be available from Lua scripting. The value will get set from the service configuration parameters.<br><br>For example, this option is used to restrict credential parameters to be given from the script code and inforce the service configuration parameter.                                                                         |
-| x-exosite-from                   | domain / solution_id / business_id | `domain / solution_id / business_id` | Populate this parameter from a user context value.<br>This option is generally used along with “x-exosite-internal-use: true” to prevent user for overriding his context and potentially accessing other user data.                                                                                                                                                              |
+| x-exosite-from                   | domain / solution_id / business_id | `domain / solution_id / business_id` | Populate this parameter from a user context value.<br>This option is generally used along with "x-exosite-internal-use: true" to prevent user for overriding his context and potentially accessing other user data.                                                                                                                                                              |
 | x-exosite-expand-body-parameters | boolean                            | `true`                               | Default=true, for a body parameter of type=object, a value set to false would force the body parameter to be explicitly given from script call.<br>Example:<br>**x-exosite-expand-body-parameters: true (default)**<br>`Keystore.set({key = "xxx", body = "value"})`<br>**x-exosite-expand-body-parameters: false** <br>`Keystore.set({key = "xxx", value = {value = "value"}})` |
 
 #### Responses Object
@@ -340,7 +340,7 @@ A container for the expected responses of an operation. The container maps a HTT
 
 The default can be used as the default response object for all HTTP codes that are not covered individually by the specification.
 
-The Responses Object MUST contain at least one response code, and it SHOULD be the response for a successful operation call.
+The Responses Object must contain at least one response code, which must be the response for a successful operation call.
 
 Reference: official [Responses Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#responses-object) documentation
 
@@ -360,7 +360,7 @@ default:
 
 | Field name         | Type   | Example                                                                                                                                                | Description                                                                                                                                                                                                      |
 |--------------------|--------|--------------------------------------------------------------------------------------------------------------------------------------------------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
-| default            | object | [`Response Object`](#response-object) / [`Reference Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#referenceObject) | The documentation of responses other than the ones declared for specific HTTP response codes. It can be used to cover undeclared                                                                                 |
+| **default**            | object | [`Response Object`](#response-object) / [`Reference Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#referenceObject) | The documentation of responses other than the ones declared for specific HTTP response codes. It can be used to cover undeclared                                                                                 |
 | {HTTP Status Code} | object | [`Response Object`](#response-object) / [`Reference Object`](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#referenceObject) | Any [HTTP status code](https://en.wikipedia.org/wiki/List_of_HTTP_status_codes) can be used as the property name (one property per HTTP status code). Describes the expected response for that HTTP status code. |
 
 #### Response Object
@@ -405,7 +405,7 @@ api_key:
 | {name}        | object | [`Security Scheme Object`](#security-scheme-object) | A single security scheme definition, mapping a "name" to the scheme it defines. |
 
 #### Security Scheme Object
-Allows the definition of a security scheme that can be used by the operations. Supported schemes are basic authentication, an API key (either as a header or as a query parameter) and OAuth2.
+Allows the definition of a security scheme that can be used by the operations. Supported schemes are basic authentication and an API key (either as a header or as a query parameter). (OAuth2 currently not supported.)
 
 **Important: Murano do not support "flow", "authorizationUrl", "tokenUrl" and "scopes" fields.**
 
@@ -425,34 +425,32 @@ name: <api_key>
 in: <header>
 ```
 
-**OAuth2 Object Example:**
-```yaml
-type: oauth2
-x-exosite-token-field: <token>
-```
-
 ##### Fixed Fields
 
-| Field Pattern | Type   | Example                   | Validity | Description                                                                                    |
-|---------------|--------|---------------------------|----------|------------------------------------------------------------------------------------------------|
-| type          | string | `basic / apiKey / oauth2` | Any      | **Required**. The type of the security scheme. Valid values are "basic", "apiKey" or "oauth2". |
-| description   | string | `Description something`   | Any      | A short description for security scheme.                                                       |
-| name          | string | `<api_key>`               | Any      | **Required**. The name of the header or query parameter to be used.                            |
-| in            | string | `<header>`                | apiKey   | **Required**. The location of the API key. Valid values are "query" or "header".               |
+| Field Pattern | Type   | Example                   | Validity        | Description                                                                                                                                                                                                                                                                                          |
+|---------------|--------|---------------------------|-----------------|------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
+| type          | string | `basic / apiKey / bearer` | Any             | **Required**. The type of the security scheme. Valid values are:<br>"Basic" for [https://tools.ietf.org/html/rfc7617](https://tools.ietf.org/html/rfc7617).<br>"bearer" for [https://tools.ietf.org/html/rfc6750](https://tools.ietf.org/html/rfc6750).<br>"apiKey" for a direct token transmission. |
+| description   | string | `Description something`   | Any             | A short description for security scheme.                                                                                                                                                                                                                                                             |
+| name          | string | `api_key`                 | apiKey / bearer | **Required**. The name of the header or query parameter to be used.<br>For "bearer" type the name of the parameter containing the value.                                                                                                                                                             |
+| in            | string | `header`                  | apiKey          | **Required**. The location of the API key. Valid values are "query" or "header".                                                                                                                                                                                                                     |
 
 ##### Murano Specific Fields
 
-| Field Pattern          | Type   | Example       | Validity | Description                                                                                |
-|------------------------|--------|---------------|----------|--------------------------------------------------------------------------------------------|
-| x-exosite-user-field   | string | `someAccount` | basic    | **Required**. Defines the parameter name providing the user.                               |
-| x-exosite-secret-field | string | `someSecret`  | basic    | **Required**. Defines the parameter name providing the secret.                             |
-| x-exosite-token-field  | string | `<token>`     | oauth2   | **Required**. The parameter name containing the token to add in the Authentication header. |
+| Field Pattern          | Type   | Example       | Validity | Description                                                                                                         |
+|------------------------|--------|---------------|----------|---------------------------------------------------------------------------------------------------------------------|
+| x-exosite-user-field   | string | `someAccount` | basic    | **Required**. Defines the parameter name providing the user credential value.                                       |
+| x-exosite-secret-field | string | `someSecret`  | basic    | **Required**. Defines the parameter name providing the secret credential value.                                     |
+| x-exosite-prefix       | string | `token`       | apiKey   | A string to prefix in the header content.<br>E.g. X-secret: token `<user token>`                                        |
+| x-exosite-from         | string | `token`       | apiKey   | **Required**. The parameter name containing the token value to add in the Authentication header or query parameter. |
 
 #### Config Parameters Object
 
 An array of parameters (JSON schema) defining the data set in the service Configuration parameters field for this serviceconfig.
 
-Service configuration parameters are used as default value during operation call from Lua script and can be use for default configuration or for credentials injection to avoid user to pass then from source code.
+Service configuration parameters allow user to set static values for the service. Murano services page will display dynamically generated forms based on this configuration.<br>
+Those parameters can be used used in 2 ways:
+1. Provide default value for Lua script calls to avoid user to explicitly set static configuration like credentials from the scripting environment.
+2. Service initialization. Parameters can be transmitted during service lifecycle events such as ‘x-exosite-init’ or ‘x-exosite-update’ to set user settings within the service.
 
 ##### Required Fields
 
@@ -467,7 +465,7 @@ Service configuration parameters are used as default value during operation call
 | Field Pattern          | Type                               | Example                              | Description                                                                                                                                                                                                         |
 |------------------------|------------------------------------|--------------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | x-exosite-hidden       | boolean                            | `false`                              | Declares this configuration parameter to be hidden or not.                                                                                                                                                          |
-| x-exosite-internal-use | boolean                            | `false`                              | If set to *true*: prevent this parameter to be filled by user.<br><br>For example, this option is used to restrict the parameter value to an internally provided value like “solution_id”.                          |
-| x-exosite-from         | domain / solution_id / business_id | `domain / solution_id / business_id` | Populate this parameter from a user context value.<br>This option is generally used along with “x-exosite-internal-use: true” to prevent user for overriding his context and potentially accessing other user data. |
+| x-exosite-internal-use | boolean                            | `false`                              | If set to *true*: prevent this parameter to be filled by user.<br><br>For example, this option is used to restrict the parameter value to an internally provided value like "solution_id".                          |
+| x-exosite-from         | domain / solution_id / business_id | `domain / solution_id / business_id` | Populate this parameter from a user context value.<br>This option is generally used along with "x-exosite-internal-use: true" to prevent user for overriding his context and potentially accessing other user data. |
 | required               | boolean                            | `false`                              | Determines whether this configuration parameter is mandatory for the service to be usable from Murano scripting.                                                                                                    |
 | format                 | string                             | `password`                           | Set to password format for obscuring the sensitive data like password and secret token. The real data will not be returned from backend.                                                                            |
