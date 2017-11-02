@@ -334,8 +334,7 @@
       "required": [
         "operationId",
         "responses",
-        "description",
-        "parameters"
+        "description"
       ],
       "additionalProperties": false,
       "patternProperties": {
@@ -407,7 +406,7 @@
           "type" : "boolean",
           "description": "If true, restrict and hide this operation from Murano users."
         },
-        "x-example": {
+        "x-exosite-example": {
           "type": "string",
           "format": "lua",
           "description": "A lua script example of this event usage within Murano."
@@ -1250,19 +1249,10 @@
             "$ref": "#/definitions/basicAuthenticationSecurity"
           },
           {
+            "$ref": "#/definitions/bearerAuthenticationSecurity"
+          },
+          {
             "$ref": "#/definitions/apiKeySecurity"
-          },
-          {
-            "$ref": "#/definitions/oauth2ImplicitSecurity"
-          },
-          {
-            "$ref": "#/definitions/oauth2PasswordSecurity"
-          },
-          {
-            "$ref": "#/definitions/oauth2ApplicationSecurity"
-          },
-          {
-            "$ref": "#/definitions/oauth2AccessCodeSecurity"
           }
         ]
       }
@@ -1270,6 +1260,7 @@
     "basicAuthenticationSecurity": {
       "type": "object",
       "additionalProperties": false,
+      "description": "Http Basic Auth using user name & password Authorization header",
       "required": [
         "type",
         "description",
@@ -1293,6 +1284,44 @@
         "x-exosite-secret-field": {
           "type": "string",
           "description": "Defines the parameter name providing the secret."
+        },
+        "x-exosite-internal-use": {
+          "type": "boolean",
+          "description": "Indicate if the parameter can be set from scripting environment."
+        }
+      },
+      "patternProperties": {
+        "^x-(?!exosite)[\\d\\w-]+$": {
+          "$ref": "#/definitions/vendorExtension"
+        }
+      }
+    },
+    "bearerAuthenticationSecurity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Http Bearer token Authorization header",
+      "required": [
+        "type",
+        "description",
+        "name"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "bearer"
+          ]
+        },
+        "description": {
+          "type": "string"
+        },
+        "name": {
+          "type": "string",
+          "description": "Defines the parameter name providing the token."
+        },
+        "x-exosite-internal-use": {
+          "type": "boolean",
+          "description": "Indicate if the parameter can be set from scripting environment."
         }
       },
       "patternProperties": {
@@ -1307,8 +1336,7 @@
       "required": [
         "type",
         "name",
-        "in",
-        "description"
+        "in"
       ],
       "properties": {
         "type": {
@@ -1318,10 +1346,12 @@
           ]
         },
         "name": {
-          "type": "string"
+          "type": "string",
+          "description": "Defines the header name and the parameter name providing the api key."
         },
         "in": {
           "type": "string",
+          "description": "Defines the location of the key either in request header or query parameter.",
           "enum": [
             "header",
             "query"
@@ -1329,199 +1359,24 @@
         },
         "description": {
           "type": "string"
+        },
+        "x-exosite-prefix": {
+          "type": "string",
+          "description": "For in=header. Defines the header value prefix. Eg. token <key>."
+        },
+        "x-exosite-from": {
+          "type": "string",
+          "description": "Defines the the parameter name providing the api key if different from the header name."
+        },
+        "x-exosite-internal-use": {
+          "type": "boolean",
+          "description": "Indicate if the parameter can be set from scripting environment."
         }
       },
       "patternProperties": {
         "^x-(?!exosite)[\\d\\w-]+$": {
           "$ref": "#/definitions/vendorExtension"
         }
-      }
-    },
-    "oauth2ImplicitSecurity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "flow",
-        "authorizationUrl",
-        "description",
-        "x-exosite-token-field"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "oauth2"
-          ]
-        },
-        "flow": {
-          "type": "string",
-          "enum": [
-            "implicit"
-          ]
-        },
-        "scopes": {
-          "$ref": "#/definitions/oauth2Scopes"
-        },
-        "authorizationUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "description": {
-          "type": "string"
-        },
-        "x-exosite-token-field": {
-          "type": "string",
-          "description": "The parameter name containing the token to add in the Authentication header."
-        }
-      },
-      "patternProperties": {
-        "^x-(?!exosite)[\\d\\w-]+$": {
-          "$ref": "#/definitions/vendorExtension"
-        }
-      }
-    },
-    "oauth2PasswordSecurity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "flow",
-        "tokenUrl",
-        "description",
-        "x-exosite-token-field"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "oauth2"
-          ]
-        },
-        "flow": {
-          "type": "string",
-          "enum": [
-            "password"
-          ]
-        },
-        "scopes": {
-          "$ref": "#/definitions/oauth2Scopes"
-        },
-        "tokenUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "description": {
-          "type": "string"
-        },
-        "x-exosite-token-field": {
-          "type": "string",
-          "description": "The parameter name containing the token to add in the Authentication header."
-        }
-      },
-      "patternProperties": {
-        "^x-(?!exosite)[\\d\\w-]+$": {
-          "$ref": "#/definitions/vendorExtension"
-        }
-      }
-    },
-    "oauth2ApplicationSecurity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "flow",
-        "tokenUrl",
-        "description",
-        "x-exosite-token-field"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "oauth2"
-          ]
-        },
-        "flow": {
-          "type": "string",
-          "enum": [
-            "application"
-          ]
-        },
-        "scopes": {
-          "$ref": "#/definitions/oauth2Scopes"
-        },
-        "tokenUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "description": {
-          "type": "string"
-        },
-        "x-exosite-token-field": {
-          "type": "string",
-          "description": "The parameter name containing the token to add in the Authentication header."
-        }
-      },
-      "patternProperties": {
-        "^x-(?!exosite)[\\d\\w-]+$": {
-          "$ref": "#/definitions/vendorExtension"
-        }
-      }
-    },
-    "oauth2AccessCodeSecurity": {
-      "type": "object",
-      "additionalProperties": false,
-      "required": [
-        "type",
-        "flow",
-        "authorizationUrl",
-        "tokenUrl",
-        "description",
-        "x-exosite-token-field"
-      ],
-      "properties": {
-        "type": {
-          "type": "string",
-          "enum": [
-            "oauth2"
-          ]
-        },
-        "flow": {
-          "type": "string",
-          "enum": [
-            "accessCode"
-          ]
-        },
-        "scopes": {
-          "$ref": "#/definitions/oauth2Scopes"
-        },
-        "authorizationUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "tokenUrl": {
-          "type": "string",
-          "format": "uri"
-        },
-        "description": {
-          "type": "string"
-        },
-        "x-exosite-token-field": {
-          "type": "string",
-          "description": "The parameter name containing the token to add in the Authentication header."
-        }
-      },
-      "patternProperties": {
-        "^x-(?!exosite)[\\d\\w-]+$": {
-          "$ref": "#/definitions/vendorExtension"
-        }
-      }
-    },
-    "oauth2Scopes": {
-      "type": "object",
-      "additionalProperties": {
-        "type": "string"
       }
     },
     "mediaTypeList": {
