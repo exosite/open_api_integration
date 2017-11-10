@@ -26,7 +26,8 @@ paths:
     get:
       description: At least one operation is required.
       operationId: myOperation # Used as Scripting function call
-      x-exosite-example: | -- A valid script example
+      x-exosite-example: >
+                  -- A valid script example
 
                   local result = MinimalService.myOperation()
       responses:
