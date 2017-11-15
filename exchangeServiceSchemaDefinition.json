@@ -270,6 +270,10 @@
           "type" : "boolean",
           "description": "If set to true: prevent this parameter to be filled by user."
         },
+        "x-exosite-restricted": {
+          "type" : "boolean",
+          "description": "If set to true: prevent this parameter to be filled by user."
+        },
         "x-exosite-from": {
           "type": "string",
           "description": "Populate this parameter from a user context value.",
@@ -403,6 +407,10 @@
           "description": "If true, hide this operation from documentation."
         },
         "x-exosite-internal-use": {
+          "type" : "boolean",
+          "description": "If true, restrict and hide this operation from Murano users."
+        },
+        "x-exosite-restricted": {
           "type" : "boolean",
           "description": "If true, restrict and hide this operation from Murano users."
         },
@@ -621,6 +629,10 @@
           "type" : "boolean",
           "description": "If true, restrict and hide this parameter from Murano users."
         },
+        "x-exosite-restricted": {
+          "type" : "boolean",
+          "description": "If true, restrict and hide this parameter from Murano users."
+        },
         "x-exosite-from": {
           "type": "string",
           "description": "Populate this parameter from a user context value.",
@@ -717,6 +729,10 @@
           "description": "If true, hide this parameter from documentation."
         },
         "x-exosite-internal-use": {
+          "type" : "boolean",
+          "description": "If true, restrict and hide this parameter from Murano users."
+        },
+        "x-exosite-restricted": {
           "type" : "boolean",
           "description": "If true, restrict and hide this parameter from Murano users."
         },
@@ -823,6 +839,10 @@
           "type" : "boolean",
           "description": "If true, restrict and hide this parameter from Murano users."
         },
+        "x-exosite-restricted": {
+          "type" : "boolean",
+          "description": "If true, restrict and hide this parameter from Murano users."
+        },
         "x-exosite-from": {
           "type": "string",
           "description": "Populate this parameter from a user context value.",
@@ -921,6 +941,10 @@
           "description": "If true, hide this parameter from documentation."
         },
         "x-exosite-internal-use": {
+          "type" : "boolean",
+          "description": "If true, restrict and hide this parameter from Murano users."
+        },
+        "x-exosite-restricted": {
           "type" : "boolean",
           "description": "If true, restrict and hide this parameter from Murano users."
         },
@@ -1288,6 +1312,10 @@
         "x-exosite-internal-use": {
           "type": "boolean",
           "description": "Indicate if the parameter can be set from scripting environment."
+        },
+        "x-exosite-restricted": {
+          "type": "boolean",
+          "description": "Indicate if the parameter can be set from scripting environment."
         }
       },
       "patternProperties": {
@@ -1320,6 +1348,10 @@
           "description": "Defines the parameter name providing the token."
         },
         "x-exosite-internal-use": {
+          "type": "boolean",
+          "description": "Indicate if the parameter can be set from scripting environment."
+        },
+        "x-exosite-restricted": {
           "type": "boolean",
           "description": "Indicate if the parameter can be set from scripting environment."
         }
@@ -1369,6 +1401,10 @@
           "description": "Defines the the parameter name providing the api key if different from the header name."
         },
         "x-exosite-internal-use": {
+          "type": "boolean",
+          "description": "Indicate if the parameter can be set from scripting environment."
+        },
+        "x-exosite-restricted": {
           "type": "boolean",
           "description": "Indicate if the parameter can be set from scripting environment."
         }

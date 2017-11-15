@@ -66,7 +66,7 @@ paths:
         in:           path
         type:         string
         required:     true
-        x-exosite-internal-use: true # Indicate the Scripting call cannot overload this parameter
+        x-exosite-restricted: true # Indicate the Scripting call cannot overload this parameter
     post:
       tags:
         - messages
