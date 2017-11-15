@@ -24,7 +24,7 @@ basePath: /
 ################################################################################
 #                          Solution lifecycle Events                           #
 ################################################################################
-# Following Operation should generally be restricted with "x-exosite-internal-use: true"
+# Following Operation should generally be restricted with "x-exosite-restricted: true"
 x-exosite-init: createSolution # Triggered by Murano when this service is enabled in a solution
 x-exosite-info: getSolution # Triggered by Murano to retrieve custom information about the service solution namespace
 x-exosite-update: updateSolution # Triggered by Murano when the solution service configuration is updated
@@ -44,12 +44,12 @@ x-exosite-config-parameters:
 ################################################################################
 paths:
   # Administration endpoint used by Murano solution lifecycle events
-  # Those operation uses the "x-exosite-internal-use" to prevent the user to access them directly
+  # Those operation uses the "x-exosite-restricted" to prevent the user to access them directly
   /{solution_id}:
     parameters:
       - name: solution_id
         x-exosite-from: solution_id # Indicate this value is injected from the user solution_id
-        x-exosite-internal-use: true # Indicate the user cannot provide this parameter
+        x-exosite-restricted: true # Indicate the user cannot provide this parameter
         type: string
         in: path
         description: The solution identifier. Set automatically.
@@ -57,7 +57,7 @@ paths:
     post:
       description: Used by Murano to create a solution namespace.
       operationId: createSolution
-      x-exosite-internal-use: true # Indicate that this operation cannot be called from user scripts
+      x-exosite-restricted: true # Indicate that this operation cannot be called from user scripts
       parameters:
         - name: settings
           in: body
@@ -79,7 +79,7 @@ paths:
     put:
       description: Used by Murano to update the solution settings.
       operationId: updateSolution
-      x-exosite-internal-use: true
+      x-exosite-restricted: true
       parameters:
         - name: settings
           in: body
@@ -93,7 +93,7 @@ paths:
     delete:
       description: Used by Murano to remove a solution and clean its namespace.
       operationId: delSolution
-      x-exosite-internal-use: true
+      x-exosite-restricted: true
       responses:
         default:
           description: Solution successfully removed.
@@ -106,7 +106,7 @@ paths:
         in: path
         description: The solution identifier. Set automatically by Murano at service call.
         x-exosite-from: solution_id # Indicate this value is injected from the user solution_id
-        x-exosite-internal-use: true # Indicate the user cannot provide this parameter
+        x-exosite-restricted: true # Indicate the user cannot provide this parameter
         required: true
     post:
       description: Save data to the solution namespace.
