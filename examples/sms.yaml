@@ -25,9 +25,10 @@ externalDocs:
 ################################################################################
 
 # The hostname needs to be live and without any certificate issues, as Pegasus 
-# does a TSL check as part of its validation. Currently, node thinks exosite.com (as well as swagger.io) 
-# have expired certs (even though they don't.) More info about this issue here: 
+# does a TSL check as part of its validation. Currently, node thinks exosite.io
+# has an expired cert even though it doesn't. More info about this issue here: 
 # https://stackoverflow.com/questions/27716511/error-cert-has-expired-in-node-js-request-module-macu-vs-facebook
+# exosite.com and swagger.io fail with a different error.
 
 host: google.com
 basePath: /
