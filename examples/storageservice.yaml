@@ -18,7 +18,13 @@ info:
 ################################################################################
 #                            API Information                                   #
 ################################################################################
-host: domain.of.your.service
+
+# The hostname needs to be live and without any certificate issues, as Pegasus 
+# does a TSL check as part of its validation. Currently, node thinks exosite.com (as well as swagger.io) 
+# have expired certs (even though they don't.) More info about this issue here: 
+# https://stackoverflow.com/questions/27716511/error-cert-has-expired-in-node-js-request-module-macu-vs-facebook
+
+host: google.com
 basePath: /
 
 ################################################################################
