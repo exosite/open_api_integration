@@ -15,12 +15,7 @@ info:
 #                            API Information                                   #
 ################################################################################
 
-# The hostname needs to be live and without any certificate issues, as Pegasus 
-# does a TSL check as part of its validation. Currently, node thinks exosite.io
-# has an expired cert even though it doesn't. More info about this issue here: 
-# https://stackoverflow.com/questions/27716511/error-cert-has-expired-in-node-js-request-module-macu-vs-facebook
-# exosite.com and swagger.io fail with a different error.
-
+# A hostname with a valid, signed, and active TSL certificate is required.
 host: google.com
 basePath: /
 x-exosite-health-path: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
