@@ -14,7 +14,9 @@ info:
 ################################################################################
 #                            API Information                                   #
 ################################################################################
-host: domain.of.your.service
+
+# A hostname with a valid, signed, and active TSL certificate is required.
+host: google.com
 basePath: /
 x-exosite-health-path: /health # This endpoint needs to return 2xx status code. If omitted basePath is used
 

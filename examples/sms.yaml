@@ -23,7 +23,9 @@ externalDocs:
 ################################################################################
 #                            API Information                                   #
 ################################################################################
-host:     api.sms.com
+
+# A hostname with a valid, signed, and active TSL certificate is required.
+host: google.com
 basePath: /
 consumes:
   - application/x-www-form-urlencoded
