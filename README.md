@@ -554,6 +554,3 @@ The definitions section can be used by reference objects in order re-use specifi
 
 ----
 
-The greatest detail about all these sections can be read in the [Swagger Specification](https://swagger.io/specification/).
-
-Access to create new or extend additional services is currently only available to authorized accounts. If you want to learn more, or want to get started, feel free to contact us. You can do this from either the ['Support'](https://support.exosite.com/hc/en-us) or ['Developer Forum'](https://community.exosite.com) tabs at the top of this page. 
