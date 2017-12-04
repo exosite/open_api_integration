@@ -15,7 +15,7 @@
     - [Security Definitions Object](#security-definitions-object)
     - [Security Schema Object](#security-schema-object)
     - [Config Parameters Object](#config-parameters-object)
-  - [Example - Dark Sky Weather Service Integration](#dark-sky-weather-example)
+  - [Example - Dark Sky Weather Service Integration](#example---dark-sky-weather-service-integration)
 
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
