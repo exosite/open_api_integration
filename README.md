@@ -5,7 +5,7 @@
  - [Service Documentation](#service-documentation)
  - [Schema Definition](#schema-definition)
     - [Required Fields](#required-fields)
-    - [Murano Specific Fields (Optional)](#murano-specific-fields)
+    - [Murano Specific Fields (Optional)](#murano-specific-fields-optional)
     - [Optional Fields](#optional-fields)
     - [Info Object](#info-object)
     - [Paths Object](#paths-object)
