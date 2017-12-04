@@ -1,3 +1,21 @@
+### Table of contents
+ - [Open API Integration](#open-api-integration)
+ - [Murano Service Definition](#murano-service-definition)
+ - [Quick Start](#quick-start)
+ - [Service Documentation](#service-documentation)
+ - [Schema Definition](#schema-definition)
+    - [Required Fields](#required-fields)
+    - [Murano Specific Fields(Optional)](#murano-specific-fields)
+    - [Optional Fields](#optional-fields)
+    - [Info Object](#info-object)
+    - [Paths Object](#paths-object)
+    - [Operation Object](#operation-object)
+    - [Parameter Object](#parameter-object)
+    - [Responses Object](#responses-object)
+    - [Security Definitions Object](#security-definitions-object)
+    - [Security Schema Object](#security-schema-object)
+    - [Config Parameters Object](#config-parameters-object)
+
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
 
