@@ -1,3 +1,22 @@
+### Table of contents
+ - [Open API Integration](#open-api-integration)
+ - [Murano Service Definition](#murano-service-definition)
+ - [Quick Start](#quick-start)
+ - [Service Documentation](#service-documentation)
+ - [Schema Definition](#schema-definition)
+    - [Required Fields](#required-fields)
+    - [Murano Specific Fields (Optional)](#murano-specific-fields-optional)
+    - [Optional Fields](#optional-fields)
+    - [Info Object](#info-object)
+    - [Paths Object](#paths-object)
+    - [Operation Object](#operation-object)
+    - [Parameter Object](#parameter-object)
+    - [Responses Object](#responses-object)
+    - [Security Definitions Object](#security-definitions-object)
+    - [Security Schema Object](#security-schema-object)
+    - [Config Parameters Object](#config-parameters-object)
+  - [Example - Dark Sky Weather Service Integration](#example---dark-sky-weather-service-integration)
+
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
 
@@ -69,7 +88,7 @@ Make some examples:
 | host       | string | `'domain.of.your.service'`        | Used by Murano to make service calls. The external host (name or ip) serving the Service.                                                                           |
 | paths      | string | [`Paths Object`](#paths-object) | Defines the Service API capability, called operation.                                                                                                               |
 
-#### Murano Specific Fields(Optional)
+#### Murano Specific Fields (Optional)
 
 | Field Name                  | Type     | Example                                                   | Description                                                                                                                                                                                                                                                                                                                |
 |-----------------------------|----------|-----------------------------------------------------------|----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
@@ -469,3 +488,69 @@ Those parameters can be used used in 2 ways:
 | x-exosite-from         | domain / solution_id / business_id | `domain / solution_id / business_id` | Populate this parameter from a user context value.<br>This option is generally used along with "x-exosite-restricted: true" to prevent user for overriding his context and potentially accessing other user data. |
 | required               | boolean                            | `false`                              | Determines whether this configuration parameter is mandatory for the service to be usable from Murano scripting.                                                                                                    |
 | format                 | string                             | `password`                           | Set to password format for obscuring the sensitive data like password and secret token. The real data will not be returned from backend.                                                                            |
+
+## Example - Dark Sky Weather Service Integration
+As an example service please take a look at this small Dark Sky weather service integration: https://github.com/exosite/darksky_service/blob/master/darksky.yaml. Notice that the service specification has four main sections. 
+
+#### API Information
+
+This Sections includes a summary of the integration along with attendant information about where more information can be found what format and encoding expectations a consumer of this service should expect.
+
+```
+info:
+  version:      "0.2"
+  title:        Dark Sky Weather Service Integration
+  description:  |
+                ## Use Dark Sky to get weather forecasts and historical weather data.
+                This is a Murano Service integration with
+                [Dark Sky](https://darksky.net) to allow your Murano solution
+                to get weather forecasts and historical weather data. [Powered by Dark Sky](https://darksky.net/poweredby/)
+  contact:
+    name:       Exosite Support
+    email:      support@exosite.com
+```
+
+#### Service Configuration Parameters
+
+This is a special section Exosite extended from Swagger to make service configurations available through the Murano UI. Services like this Dark Sky service need to be configured with an API token in order to function. 
+
+```
+x-exosite-config-parameters:
+  - name:         auth_token
+    description:  Dark Sky Authentication Token
+    type:         string
+    format:       password
+    required:     true
+```
+
+#### Paths
+
+This is the real body of the service specification where the endpoints of the Dark Sky service are defined and combined into a Murano solution scripting environment operation. 
+
+
+```
+paths:
+  /{auth_token}/{lat_and_long_or_time}:
+
+    > parameters:
+
+    get:
+      tags:
+        - calls
+      operationId:  forecast
+      summary:      Make a request to Dark Sky
+      description:  Fetch a weather forecast or get historical weather data based of input latitude and longitude
+      x-exosite-example:    
+
+
+                    --#ENDPOINT GET /darksky/weather
+                    weather_data = Darksky.forecast({lat_and_long_or_time = '44.977753,93.265011'})
+      > parameters:
+```
+
+#### Definitions
+
+The definitions section can be used by reference objects in order re-use specification code. If elements of the spec are copied and pasted more than once, they can be set here and reused. 
+
+----
+
