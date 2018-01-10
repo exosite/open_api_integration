@@ -418,6 +418,13 @@
           "type": "string",
           "format": "lua",
           "description": "A lua script example of this event usage within Murano."
+        },
+        "x-exosite-timeout": {
+          "type": "integer",
+          "minimum": 1000,
+          "maximum": 30000,
+          "default": 10000,
+          "description": "Operation timeout in ms, default to 10 sec."
         }
       }
     },

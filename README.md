@@ -284,6 +284,7 @@ x-exosite-restricted: false
 | x-exosite-hidden       | boolean     | `false`                                                                                                                                                       | If set to *true*: hide this operation from documentation.                                                                                                                                            |
 | x-exosite-restricted | boolean     | `false`                                                                                                                                                       | If set to true: prevent this operation from being exposed in Lua scripting<br><br>For example, this option is used to restrict life-cycle operations like initialize or delete the user namespace.   |
 | x-exosite-example      | string: Lua | `-- Example of Lua`<br>`script using the Operation`<br><br>`local parameters = {myparameter = "value"}`<br>`Local result = Myservice.myoperation(parameters)` | Provide an example of the usage of the operation call.<br>The value is required to be a valid Lua script string.<br><br>**Important**: A known bug requires to put a double return carriage after each Lua comment. |
+| x-exosite-timeout      | integer[1000..30000] | 10000 | Operation timeout in ms.<br>Default value: 10sec. |
 
 #### Parameter Object
 Describes a single operation parameter. Reference: official [Parameter Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#parameterObject) documentation.
@@ -490,7 +491,7 @@ Those parameters can be used used in 2 ways:
 | format                 | string                             | `password`                           | Set to password format for obscuring the sensitive data like password and secret token. The real data will not be returned from backend.                                                                            |
 
 ## Example - Dark Sky Weather Service Integration
-As an example service please take a look at this small Dark Sky weather service integration: https://github.com/exosite/darksky_service/blob/master/darksky.yaml. Notice that the service specification has four main sections. 
+As an example service please take a look at this small Dark Sky weather service integration: https://github.com/exosite/darksky_service/blob/master/darksky.yaml. Notice that the service specification has four main sections.
 
 #### API Information
 
@@ -512,7 +513,7 @@ info:
 
 #### Service Configuration Parameters
 
-This is a special section Exosite extended from Swagger to make service configurations available through the Murano UI. Services like this Dark Sky service need to be configured with an API token in order to function. 
+This is a special section Exosite extended from Swagger to make service configurations available through the Murano UI. Services like this Dark Sky service need to be configured with an API token in order to function.
 
 ```
 x-exosite-config-parameters:
@@ -525,7 +526,7 @@ x-exosite-config-parameters:
 
 #### Paths
 
-This is the real body of the service specification where the endpoints of the Dark Sky service are defined and combined into a Murano solution scripting environment operation. 
+This is the real body of the service specification where the endpoints of the Dark Sky service are defined and combined into a Murano solution scripting environment operation.
 
 
 ```
@@ -550,7 +551,6 @@ paths:
 
 #### Definitions
 
-The definitions section can be used by reference objects in order re-use specification code. If elements of the spec are copied and pasted more than once, they can be set here and reused. 
+The definitions section can be used by reference objects in order re-use specification code. If elements of the spec are copied and pasted more than once, they can be set here and reused.
 
 ----
-
