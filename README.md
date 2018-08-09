@@ -9,19 +9,21 @@
     - [Required Fields](#required-fields)
     - [Murano Specific Fields (Optional)](#murano-specific-fields-optional)
     - [Optional Fields](#optional-fields)
-    - [Info Object](#info-object)
-    - [Paths Object](#paths-object)
-    - [Operation Object](#operation-object)
-    - [Parameter Object](#parameter-object)
-    - [Responses Object](#responses-object)
-    - [Security Definitions Object](#security-definitions-object)
-    - [Security Schema Object](#security-schema-object)
-    - [Config Parameters Object](#config-parameters-object)
+    - [Info](#info-object)
+    - [Paths](#paths-object)
+    - [Operation](#operation-object)
+    - [Parameter](#parameter-object)
+    - [Responses](#responses-object)
+    - [Security Definitions](#security-definitions-object)
+    - [Security Schema](#security-schema-object)
+    - [Config Parameters](#config-parameters-object)
 
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
 
 Murano is utilizing this format as description to integrate its internal and external Services. It also provided the dynamic documentation support for UI Editor auto-completion & [docs.exosite.com/reference/services](docs.exosite.com/reference/services).
+
+Find information about publishing exchange element on [docs.exosite.com/reference/ui/exchange/authoring-elements-guide](http://docs.exosite.com/reference/ui/exchange/authoring-elements-guide/#openapi-integration-service)
 
 ## Murano Service Definition
 Murano Services are Web-Services providing capability through REST HTTP APIs. To expose and describe those APIs Murano uses the [Swagger V2 (OpenAPI) standard](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md) with a few additional properties described in this page. Malformed schema will be rejected upon creation to avoid later confusion for the user.
