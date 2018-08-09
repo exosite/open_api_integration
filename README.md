@@ -1,7 +1,9 @@
 ### Table of contents
  - [Open API Integration](#open-api-integration)
  - [Murano Service Definition](#murano-service-definition)
+    - [Examples](#examples)
  - [Quick Start](#quick-start)
+    - [Validation](#validation)
  - [Service Documentation](#service-documentation)
  - [Schema Definition](#schema-definition)
     - [Required Fields](#required-fields)
@@ -15,7 +17,6 @@
     - [Security Definitions Object](#security-definitions-object)
     - [Security Schema Object](#security-schema-object)
     - [Config Parameters Object](#config-parameters-object)
-  - [Example - Dark Sky Weather Service Integration](#example---dark-sky-weather-service-integration)
 
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
@@ -45,6 +46,24 @@ This is a SMS notifications service definition for using some service provider. 
 Link: [sms.yaml](examples/sms.yaml)
 
 ### Quick Start
+
+#### Validation
+
+At each following steps you can run the validation script to test your syntax.
+
+*Required dependency*
+
+> sudo pip install json-spec
+
+> sudo apt install libghc-yaml-dev
+
+*Validate your schema*
+
+> ./validate path/to/swagger.yaml
+
+_TIPS:_
+- For more descriptive validation error message, you can use: https://jsonschemalint.com/#/version/draft-04/markup/json
+- To convert YAML <-> JSON use one of the online available tool: https://codebeautify.org/yaml-to-json-xml-csv
 
 #### Step 1: Start Editing your API swagger v2
 The first step is to create a file in yaml format to describing your web service API.

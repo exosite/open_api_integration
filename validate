@@ -1,0 +1,8 @@
+#!/bin/bash
+
+if [[ "$1" == "" ]]; then
+  echo "Provide swagger yaml filename"
+  exit 0
+fi
+
+yaml2json - < $1 | tee tmp.json | json validate --schema-file exchangeServiceSchemaDefinition.json --document-file /dev/stdin
