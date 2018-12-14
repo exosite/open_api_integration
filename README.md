@@ -310,53 +310,80 @@ x-exosite-restricted: false
 #### Parameter Object
 Describes a single operation parameter. Reference: official [Parameter Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#parameterObject) documentation.
 
-**Important: [collectionFormat: "multi"] is currently not supported by murano.**
-
 **Parameter Object Example (Body Parameters):**
 ```yaml
 name: user
 in: body
-description: user to add to the system
+description: users to add to the system
 required: true
 schema:
+  description: List of users
   type: array
   items:
+    description: user id
     type: string
+```
+
+In this case the top level body element is an array. Following case show embedded field.
+
+```yaml
+name: user
+in: body
+description: body content
+required: true
+schema:
+  description: Request data
+  type: object
+  properties:
+    users:
+      description: List of users
+      type: array
+      items:
+        description: user id
+        type: string
 ```
 
 **Parameter Object Example (Header Parameters):**
 ```yaml
 name: user
-in: body
-description: user to add to the system
-required: true
-schema:
-  type: array
-  items:
-    type: string
+in: header
+description: user id
+type: string
 ```
 
 **Parameter Object Example (Path Parameters):**
 ```yaml
 name: user
-in: body
-description: user to add to the system
-required: true
-schema:
-  type: array
-  items:
-    type: string
+in: path
+description: user id
+type: string # default
+# required: true -> Path parameters are always required
+```
+
+Or a list with:
+
+```yaml
+name: user
+in: path
+description: User list
+type: array
+items:
+  description: user id
+  type: string
+collectionFormat: csv # default
 ```
 
 **Parameter Object Example (Optional Query Parameters):**
 ```yaml
 name: id
 in: query
-description: ID of the object to fetch
-required: false
+description: list of ids
+required: false # default
 type: array
 items:
+  description: user id
   type: string
+collectionFormat: multi
 ```
 
 ##### Required Fields
