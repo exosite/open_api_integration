@@ -43,7 +43,7 @@ securityDefinitions:
      # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#signature
      type: signature
      # name: signature # optional by default goint in signature header
-   clientCA:
+  clientCA:
      # Client CA authentication, using Murano Services CA
      # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#clientca
      type: clientCA
