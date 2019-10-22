@@ -1,0 +1,89 @@
+swagger: "2.0"
+
+################################################################################
+#                           Service Metadata                                   #
+################################################################################
+info:
+  version: "1.0"
+  title: Signed Request Example
+  description: This example showcase Murano authenticated requests to https://requestbin.com .
+  contact:
+    name: maintainer name
+    email: maintainer@email.com
+
+################################################################################
+#                            API Information                                   #
+################################################################################
+
+# A hostname with a valid, signed, and active TSL certificate is required.
+host: requestbin.com
+basePath: /r
+x-exosite-health-path: / # This endpoint needs to return 2xx status code. If omitted basePath is used
+x-exosite-config-parameters:
+  - name:         endpoint
+    description:  requestbin.com endpoint ID
+    type:         string
+    required:     true
+
+parameters:
+  Endpoint:
+    name:         endpoint
+    in:           path
+    required:     true
+    description:  The endpoint id
+    type:         string
+    x-exosite-restricted: true
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+securityDefinitions:
+  signature:
+     # Signature Header, using Murano Services CA
+     # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#signature
+     type: signature
+     # name: signature # optional by default goint in signature header
+   clientCA:
+     # Client CA authentication, using Murano Services CA
+     # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#clientca
+     type: clientCA
+security:
+  - signature: []
+
+################################################################################
+#                                Operations                                    #
+################################################################################
+paths:
+  /{endpoint}:
+    parameters:
+      - $ref: '#/parameters/Endpoint' # Matches the parameter defined in "x-exosite-config-parameters"
+    get:
+      description: Signature
+      operationId: sign
+      parameters:
+        - name: param
+          type: string
+          description: A query parameter part of the signature
+          in: query
+      responses:
+        default:
+          description: Response
+    post:
+      description: Signature with Body
+      operationId: signBody
+      parameters:
+        - name: bodyParam
+          type: string
+          description: A body parameter which length is part of the signature
+          in: body
+      responses:
+        default:
+          description: Response
+    put:
+      description: Client certificate.
+      operationId: clientCA
+      security:
+        - clientCA: []
+      responses:
+        default:
+          description: Response
