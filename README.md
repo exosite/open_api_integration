@@ -11,11 +11,16 @@
     - [Optional Fields](#optional-fields)
     - [Info](#info-object)
     - [Paths](#paths-object)
-    - [Operation](#operation-object)
-    - [Parameter](#parameter-object)
-    - [Responses](#responses-object)
+      - [Operation](#operation-object)
+      - [Parameter](#parameter-object)
+      - [Responses](#responses-object)
     - [Security Definitions](#security-definitions-object)
     - [Security Schema](#security-schema-object)
+      - [Basic](#basic)
+      - [ApiKey](#apikey)
+      - [Bearer](#bearer)
+      - [Signature](#signature)
+      - [ClientCA](#clientca)
     - [Config Parameters](#config-parameters-object)
 
 # Open API Integration
@@ -484,20 +489,6 @@ Allows the definition of a security scheme that can be used by the operations. S
 
 Reference: official [Security Scheme Object](https://github.com/OAI/OpenAPI-Specification/blob/master/versions/2.0.md#security-scheme-object) documentation.
 
-**Basic Authentication Object Example:**
-```yaml
-type: basic
-x-userField: <account>
-x-secretField: <secret>
-```
-
-**API Key Object Example:**
-```yaml
-type: apiKey
-name: <api_key>
-in: <header>
-```
-
 ##### Fixed Fields
 
 | Field Pattern | Type   | Example                   | Validity        | Description                                                                                                                                                                                                                                                                                          |
@@ -515,6 +506,146 @@ in: <header>
 | x-exosite-secret-field | string | `someSecret`  | basic    | **Required**. Defines the parameter name providing the secret credential value.                                     |
 | x-exosite-prefix       | string | `token`       | apiKey   | A string to prefix in the header content.<br>E.g. X-secret: token `<user token>`                                        |
 | x-exosite-from         | string | `token`       | apiKey   | **Required**. The parameter name containing the token value to add in the Authentication header or query parameter. |
+
+##### Basic
+
+[Standard Basic Authentication](https://tools.ietf.org/html/rfc7617).
+
+Example:
+```yaml
+type: basic
+x-userField: <account>
+x-secretField: <secret>
+```
+
+##### APIKey
+
+Flexible API Key (Token) authentication:
+
+Example:
+```yaml
+type: apiKey
+name: secretHeader
+in: header
+x-exosite-prefix: Token
+x-exosite-from: secret
+```
+
+Will generate header:
+```
+secretHeader: Token <value of secret parameter>
+```
+
+##### Bearer
+
+For simplicity Murano added a `custom` authentication scheme following the [Bearer standard](https://tools.ietf.org/html/rfc6750), similar as Swagger V3.0 however missing in the version 2.0.
+
+Example:
+```yaml
+type: bearer
+name: <source parameter name>
+```
+
+Will generate header:
+```
+authorization: Bearer <value of secret parameter>
+```
+
+##### Signature
+
+Custom signature security signing the request in a header.
+
+Example:
+```yaml
+type: signature
+# name: <name of header, default signature>
+```
+
+Will generate header:
+```
+signature: Murano <Murano Key>:<signature>
+```
+
+See our [complete example](./examples/muranoauth.yaml).
+
+The `<signature>` is built as follow:
+```
+<signature> = Base64(RSA-SHA256(<host header><url (path with query parameter)><x-exosite-tracking-id header><date header><content-length header, if any>))
+```
+
+**Server example:**
+
+First you will need to get the [Murano public certificate](./murano-services-api-cert.pem) and in order to be called from Murano the service needs a service valid certificate.
+
+```javascript
+const {createServer} = require('https');
+const {readFileSync} = require('fs');
+const {readCertificateInfo} = require('pem');
+const {verify, createPublicKey} = require('crypto');
+
+const key = readFileSync('./server.key.pem');
+const cert = readFileSync('./server.cert.pem');
+const muranoCa = readFileSync('./murano-services-api-cert.pem');
+
+const clientCertificates = { };
+readCertificateInfo(muranoCa, (error, {commonName, validity: {end} = {}} = {}) => {
+  if (error) throw error;
+  if (end < Date.now()) console.warn(`Certificate ${commonName} is expired.`);
+  clientCertificates[commonName] = createPublicKey(ca);
+});
+
+// Usage signature header
+const muranoSignatureParser = /^Murano (?<keyId>[\w.]+):(?<signature>[\w/+=]+)$/;
+createServer({key, cert}, (req, res) => {
+  res.statusCode = 401;
+  const {groups: {keyId, signature} = {}} = (req.headers.signature || '').match(muranoSignatureParser) || {};
+  const publicKey = clientCertificates[keyId];
+  if (!publicKey || !signature) return res.end();
+
+  const {host, 'x-exosite-tracking-id': trackingId, date, 'content-length': size = ''} = req.headers;
+  const data = Buffer.from(host + req.url + trackingId + date + size);
+  if (verify(null, data, publicKey, Buffer.from(signature, 'base64'))) {
+    res.statusCode = 200;
+    console.log('Welcome ' + keyId);
+  }
+  res.end();
+}).listen(8000);
+```
+
+##### ClientCA
+
+Validating request from murano using client certificate.
+
+Example:
+```yaml
+type: clientCA
+```
+
+See our [complete example](./examples/muranoauth.yaml).
+
+**Server example:**
+
+First you will need to get the [Murano public certificate](./murano-services-api-cert.pem) and in order to be called from Murano the service needs a service valid certificate.
+
+```javascript
+const {createServer} = require('https');
+const {readFileSync} = require('fs');
+
+createServer({
+  key: readFileSync('./server.key.pem'),
+  cert: readFileSync('./server.cert.pem'),
+  ca: readFileSync('./murano-services-api-cert.pem'),
+  requestCert: true,
+  rejectUnauthorized: false
+}, (req, res) => {
+  res.statusCode = 401;
+  if (req.client.authorized) {
+    res.statusCode = 200;
+    console.log('Welcome ' + req.socket.getPeerCertificate().subject.CN);
+  }
+  return res.end();
+}).listen(8000);
+```
 
 #### Config Parameters Object
 
