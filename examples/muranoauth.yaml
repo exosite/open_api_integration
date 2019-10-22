@@ -6,7 +6,7 @@ swagger: "2.0"
 info:
   version: "1.0"
   title: Signed Request Example
-  description: This example showcase Murano authenticated requests to https://requestbin.com .
+  description: This example showcase Murano authenticated requests to https://requestbin.com/r/en0xqdd251y7a .
   contact:
     name: maintainer name
     email: maintainer@email.com
@@ -16,23 +16,8 @@ info:
 ################################################################################
 
 # A hostname with a valid, signed, and active TSL certificate is required.
-host: requestbin.com
-basePath: /r
-x-exosite-health-path: / # This endpoint needs to return 2xx status code. If omitted basePath is used
-x-exosite-config-parameters:
-  - name:         endpoint
-    description:  requestbin.com endpoint ID
-    type:         string
-    required:     true
-
-parameters:
-  Endpoint:
-    name:         endpoint
-    in:           path
-    required:     true
-    description:  The endpoint id
-    type:         string
-    x-exosite-restricted: true
+host: en0xqdd251y7a.x.pipedream.net
+basePath: /
 
 ################################################################################
 #                                  Security                                    #
@@ -54,9 +39,7 @@ security:
 #                                Operations                                    #
 ################################################################################
 paths:
-  /{endpoint}:
-    parameters:
-      - $ref: '#/parameters/Endpoint' # Matches the parameter defined in "x-exosite-config-parameters"
+  /:
     get:
       description: Signature
       operationId: sign
