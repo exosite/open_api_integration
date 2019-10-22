@@ -595,7 +595,7 @@ readCertificateInfo(muranoCa, (error, {commonName, validity: {end} = {}} = {}) =
 });
 
 // Usage signature header
-const muranoSignatureParser = /^Murano (?<keyId>[\w.]+):(?<signature>[\w/+=]+)$/;
+const muranoSignatureParser = /^Murano (?<keyId>[\w.-]+):(?<signature>[\w/+=]+)$/;
 createServer({key, cert}, (req, res) => {
   res.statusCode = 401;
   const {groups: {keyId, signature} = {}} = (req.headers.signature || '').match(muranoSignatureParser) || {};
