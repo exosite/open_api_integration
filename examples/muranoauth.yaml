@@ -73,9 +73,11 @@ paths:
       operationId: signBody
       parameters:
         - name: bodyParam
-          type: string
           description: A body parameter which length is part of the signature
           in: body
+          schema:
+            description: A body parameter which length is part of the signature
+            type: string
       responses:
         default:
           description: Response
