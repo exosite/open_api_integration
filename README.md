@@ -591,22 +591,27 @@ const clientCertificates = { };
 readCertificateInfo(muranoCa, (error, {commonName, validity: {end} = {}} = {}) => {
   if (error) throw error;
   if (end < Date.now()) console.warn(`Certificate ${commonName} is expired.`);
-  clientCertificates[commonName] = createPublicKey(ca);
+  clientCertificates[commonName] = createPublicKey(muranoCa);
 });
 
-// Usage signature header
-const muranoSignatureParser = /^Murano (?<keyId>[\w.-]+):(?<signature>[\w/+=]+)$/;
+const signatureParser = /^Murano (?<keyId>[\w.-]+):(?<signature>[\w/+=]+)$/;
+function verifyMurano ({url, headers: {signature: signHeader, host, 'x-exosite-tracking-id': trackingId, date, 'content-length': size = ''}}) {
+  if (!signHeader || !trackingId || !date) return false;
+  let {groups: {keyId, signature} = {}} = signHeader.match(signatureParser) || {};
+  const publicKey = clientCertificates[keyId];
+
+  if (!publicKey || !signature) return console.log("Failed to parse " + signHeader);
+
+  const data = Buffer.from(host + url + trackingId + date + size);
+  return verify(null, data, publicKey, Buffer.from(signature, 'base64')) && keyId || console.log("Failed to verify: " + host + url + trackingId + date + size);
+}
+
 createServer({key, cert}, (req, res) => {
   res.statusCode = 401;
-  const {groups: {keyId, signature} = {}} = (req.headers.signature || '').match(muranoSignatureParser) || {};
-  const publicKey = clientCertificates[keyId];
-  if (!publicKey || !signature) return res.end();
-
-  const {host, 'x-exosite-tracking-id': trackingId, date, 'content-length': size = ''} = req.headers;
-  const data = Buffer.from(host + req.url + trackingId + date + size);
-  if (verify(null, data, publicKey, Buffer.from(signature, 'base64'))) {
+  const identity = verifyMurano(req);
+  if (identity) {
     res.statusCode = 200;
-    console.log('Welcome ' + keyId);
+    console.log('Welcome ' + identity);
   }
   res.end();
 }).listen(8000);
