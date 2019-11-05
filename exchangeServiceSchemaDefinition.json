@@ -1,5 +1,6 @@
 {
   "title": "A JSON Schema for Swagger 2.0 API. Updated for Murano exchange Services.",
+  "id": "http://swagger.io/v2/schema.json#",
   "$schema": "http://json-schema.org/draft-04/schema#",
   "type": "object",
   "required": [
@@ -86,6 +87,7 @@
       "items": {
         "$ref": "#/definitions/tag"
       },
+      "maxItems": 10,
       "uniqueItems": true
     },
     "externalDocs": {
@@ -245,7 +247,6 @@
       "description": "Defining data in the service Configuration parameters field for this serviceconfig.",
       "required": [
         "name",
-        "description",
         "type"
       ],
       "properties": {
@@ -336,8 +337,7 @@
       "type": "object",
       "required": [
         "operationId",
-        "responses",
-        "description"
+        "responses"
       ],
       "additionalProperties": false,
       "patternProperties": {
@@ -349,8 +349,11 @@
         "tags": {
           "type": "array",
           "items": {
-            "type": "string"
+            "type": "string",
+            "minLength": 1,
+            "maxLength": 20
           },
+          "maxItems": 10,
           "uniqueItems": true
         },
         "summary": {
@@ -421,7 +424,7 @@
         "x-exosite-timeout": {
           "type": "integer",
           "minimum": 1000,
-          "maximum": 30000,
+          "maximum": 60000,
           "default": 10000,
           "description": "Operation timeout in ms, default to 10 sec."
         }
@@ -488,7 +491,6 @@
           "$ref": "#/definitions/vendorExtension"
         }
       },
-      "required": ["description"],
       "properties": {
         "description": {
           "type": "string",
@@ -520,7 +522,7 @@
       ],
       "properties": {
         "type": {
-          "$ref": "#/definitions/jsonSchema/definitions/simpleTypes"
+          "$ref": "#/definitions/jsonSchema/definitions/types"
         },
         "format": {
           "type": "string"
@@ -590,7 +592,6 @@
       "required": [
         "name",
         "in",
-        "description",
         "schema"
       ],
       "patternProperties": {
@@ -671,6 +672,11 @@
             "header"
           ]
         },
+        "allowEmptyValue": {
+          "type": "boolean",
+          "default": false,
+          "description": "allows sending a parameter by name only or with an empty value."
+        },
         "description": {
           "type": "string",
           "description": "A brief description of the parameter. This could contain examples of use.  GitHub Flavored Markdown is allowed."
@@ -680,7 +686,7 @@
           "description": "The name of the parameter."
         },
         "type": {
-          "$ref": "#/definitions/jsonSchema/definitions/simpleTypes"
+          "$ref": "#/definitions/jsonSchema/definitions/types"
         },
         "format": {
           "type": "string"
@@ -733,6 +739,10 @@
         "x-exosite-hidden": {
           "type" : "boolean",
           "description": "If true, hide this parameter from documentation."
+        },
+        "x-exosite-script-only": {
+          "description": "Indicate the value cannot be provided from configuration.",
+          "type": "boolean"
         },
         "x-exosite-internal-use": {
           "type" : "boolean",
@@ -787,7 +797,7 @@
           "description": "allows sending a parameter by name only or with an empty value."
         },
         "type": {
-          "$ref": "#/definitions/jsonSchema/definitions/simpleTypes"
+          "$ref": "#/definitions/jsonSchema/definitions/types"
         },
         "format": {
           "type": "string"
@@ -840,6 +850,10 @@
         "x-exosite-hidden": {
           "type" : "boolean",
           "description": "If true, hide this parameter from documentation."
+        },
+        "x-exosite-script-only": {
+          "description": "Indicate the value cannot be provided from configuration.",
+          "type": "boolean"
         },
         "x-exosite-internal-use": {
           "type" : "boolean",
@@ -892,7 +906,7 @@
           "description": "The name of the parameter."
         },
         "type": {
-          "$ref": "#/definitions/jsonSchema/definitions/simpleTypes"
+          "$ref": "#/definitions/jsonSchema/definitions/types"
         },
         "format": {
           "type": "string"
@@ -946,6 +960,10 @@
           "type" : "boolean",
           "description": "If true, hide this parameter from documentation."
         },
+        "x-exosite-script-only": {
+          "description": "Indicate the value cannot be provided from configuration.",
+          "type": "boolean"
+        },
         "x-exosite-internal-use": {
           "type" : "boolean",
           "description": "If true, restrict and hide this parameter from Murano users."
@@ -970,8 +988,7 @@
       "required": [
         "name",
         "in",
-        "type",
-        "description"
+        "type"
       ],
       "oneOf": [
         {
@@ -1016,7 +1033,6 @@
           "$ref": "#/definitions/vendorExtension"
         }
       },
-      "required": ["description"],
       "properties": {
         "$ref": {
           "type": "string"
@@ -1124,6 +1140,9 @@
           },
           "default": {}
         },
+        "patternProperties": {
+          "$ref": "#/definitions/jsonSchema/properties/patternProperties"
+        },
         "discriminator": {
           "type": "string"
         },
@@ -1146,10 +1165,13 @@
       "additionalProperties": false,
       "properties": {
         "type": {
-          "$ref": "#/definitions/jsonSchema/definitions/simpleTypes"
+          "$ref": "#/definitions/jsonSchema/definitions/types"
         },
         "format": {
           "type": "string"
+        },
+        "description": {
+          "$ref": "#/definitions/jsonSchema/properties/description"
         },
         "items": {
           "$ref": "#/definitions/primitivesItems"
@@ -1256,7 +1278,9 @@
       ],
       "properties": {
         "name": {
-          "type": "string"
+          "type": "string",
+          "minLength": 1,
+          "maxLength": 20
         },
         "description": {
           "type": "string"
@@ -1276,6 +1300,12 @@
       "additionalProperties": {
         "oneOf": [
           {
+            "$ref": "#/definitions/signatureSecurity"
+          },
+          {
+            "$ref": "#/definitions/clientCASecurity"
+          },
+          {
             "$ref": "#/definitions/basicAuthenticationSecurity"
           },
           {
@@ -1287,13 +1317,65 @@
         ]
       }
     },
+    "signatureSecurity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Murano signature header as 'Murano <Murano Key>:<Base64(RSA-SHA256(<Host><Path with query parameters><x-exosite-tracking-id><Date><Content-Length, empty for GET>))>'.",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "signature"
+          ]
+        },
+        "name": {
+          "type": "string",
+          "description": "Defines the header name.",
+          "default": "signature"
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^x-(?!exosite)[\\d\\w-]+$": {
+          "$ref": "#/definitions/vendorExtension"
+        }
+      }
+    },
+    "clientCASecurity": {
+      "type": "object",
+      "additionalProperties": false,
+      "description": "Murano TLS client-certificate.",
+      "required": [
+        "type"
+      ],
+      "properties": {
+        "type": {
+          "type": "string",
+          "enum": [
+            "clientCA"
+          ]
+        },
+        "description": {
+          "type": "string"
+        }
+      },
+      "patternProperties": {
+        "^x-(?!exosite)[\\d\\w-]+$": {
+          "$ref": "#/definitions/vendorExtension"
+        }
+      }
+    },
     "basicAuthenticationSecurity": {
       "type": "object",
       "additionalProperties": false,
       "description": "Http Basic Auth using user name & password Authorization header",
       "required": [
         "type",
-        "description",
         "x-exosite-user-field",
         "x-exosite-secret-field"
       ],
@@ -1336,7 +1418,6 @@
       "description": "Http Bearer token Authorization header",
       "required": [
         "type",
-        "description",
         "name"
       ],
       "properties": {
@@ -1543,6 +1624,19 @@
                 "type": "string",
                 "enum": [ "array", "boolean", "integer", "null", "number", "object", "string", "file" ]
             },
+            "arrayTypes": {
+                "type": "array",
+                "items": { "$ref": "#/definitions/jsonSchema/definitions/simpleTypes" },
+                "minItems": 1,
+                "uniqueItems": true
+            },
+            "types": {
+                "anyOf": [{
+                  "$ref": "#/definitions/jsonSchema/definitions/simpleTypes"
+                }, {
+                  "$ref": "#/definitions/jsonSchema/definitions/arrayTypes"
+                }]
+            },
             "stringArray": {
                 "type": "array",
                 "items": { "type": "string" },
@@ -1658,22 +1752,13 @@
                 "uniqueItems": true
             },
             "type": {
-                "anyOf": [
-                    { "$ref": "#/definitions/jsonSchema/definitions/simpleTypes" },
-                    {
-                        "type": "array",
-                        "items": { "$ref": "#/definitions/jsonSchema/definitions/simpleTypes" },
-                        "minItems": 1,
-                        "uniqueItems": true
-                    }
-                ]
+              "$ref": "#/definitions/jsonSchema/definitions/types"
             },
             "allOf": { "$ref": "#/definitions/jsonSchema/definitions/schemaArray" },
             "anyOf": { "$ref": "#/definitions/jsonSchema/definitions/schemaArray" },
             "oneOf": { "$ref": "#/definitions/jsonSchema/definitions/schemaArray" },
             "not": { "$ref": "#/definitions/jsonSchema" }
         },
-        "required": ["description"],
         "dependencies": {
             "exclusiveMaximum": [ "maximum" ],
             "exclusiveMinimum": [ "minimum" ]

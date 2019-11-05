@@ -55,13 +55,18 @@ At each following steps you can run the validation script to test your syntax.
 
 *Required dependency*
 
-> sudo pip install json-spec
+First install nodeJs: https://nodejs.org/en/download/
+And install dependencies:
 
-> sudo apt install libghc-yaml-dev
+> npm i
 
 *Validate your schema*
 
-> ./validate path/to/swagger.yaml
+> npm test
+
+Will validate all schemas in the 'examples' folder. You can provide a source folder as input parameter.
+
+> npm test /path/to/folder
 
 _TIPS:_
 - For more descriptive validation error message, you can use: https://jsonschemalint.com/#/version/draft-04/markup/json

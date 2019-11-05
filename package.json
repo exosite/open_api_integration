@@ -1,0 +1,27 @@
+{
+  "name": "validate_murano_service",
+  "version": "1.0.0",
+  "description": "Validation tools for Murano OpenAPI service integration",
+  "keywords": [
+    "Murano",
+    "OpenAPI"
+  ],
+  "author": "renaudsauvain@exosite.com",
+  "license": "Exosite TM",
+  "main": "validate.js",
+  "dependencies": {
+    "bluebird": "^3.5.0",
+    "deep-copy": "^1.4.2",
+    "js-yaml": "^3.13.1",
+    "luaparse": "github:oxyc/luaparse#8536fd",
+    "validator": "^9.4.1",
+    "z-schema": "^3.24.2"
+  },
+  "scripts": {
+    "test": "node validate.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/exosite/open_api_integration.git"
+  }
+}
