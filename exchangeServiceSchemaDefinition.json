@@ -63,7 +63,7 @@
       "description": "Schema validation for service configuration parameters value used for service calls",
       "type": "array",
       "items": {
-        "$ref": "#/definitions/configParameter"
+        "$ref": "#/definitions/jsonSchema"
       },
       "uniqueItems": true
     },
@@ -240,61 +240,6 @@
         "$ref": "#/definitions/parameter"
       },
       "description": "One or more JSON representations for parameters"
-    },
-    "configParameter": {
-      "type": "object",
-      "additionalProperties": false,
-      "description": "Defining data in the service Configuration parameters field for this serviceconfig.",
-      "required": [
-        "name",
-        "type"
-      ],
-      "properties": {
-        "name": {
-          "type": "string",
-          "description": "The name of the configuration parameter."
-        },
-        "description": {
-          "type": "string",
-          "description": "A brief description of the configuration parameter."
-        },
-        "type": {
-          "type": "string",
-          "description": "The type of the configuration parameter."
-        },
-        "x-exosite-hidden": {
-          "type" : "boolean",
-          "description": "Declares this configuration parameter to be hidden or not."
-        },
-        "x-exosite-internal-use": {
-          "type" : "boolean",
-          "description": "If set to true: prevent this parameter to be filled by user."
-        },
-        "x-exosite-restricted": {
-          "type" : "boolean",
-          "description": "If set to true: prevent this parameter to be filled by user."
-        },
-        "x-exosite-from": {
-          "type": "string",
-          "description": "Populate this parameter from a user context value.",
-          "enum": [
-            "domain",
-            "solution_id",
-            "business_id"
-          ]
-        },
-        "required": {
-          "type": "boolean",
-          "description": "Determines whether this configuration parameter is mandatory for the service to be usable from Murano scripting."
-        },
-        "format": {
-          "type": "string",
-          "description": "Set to password format for obscuring the sensitive data like password and secret token.",
-          "enum": [
-            "password"
-          ]
-        }
-      }
     },
     "responseDefinitions": {
       "type": "object",
@@ -642,12 +587,7 @@
         },
         "x-exosite-from": {
           "type": "string",
-          "description": "Populate this parameter from a user context value.",
-          "enum": [
-            "domain",
-            "solution_id",
-            "business_id"
-          ]
+          "description": "Populate this parameter from a context value ['domain', 'solution_id', 'business_id'] or from another input parameter."
         }
       },
       "additionalProperties": false
@@ -754,12 +694,7 @@
         },
         "x-exosite-from": {
           "type": "string",
-          "description": "Populate this parameter from a user context value.",
-          "enum": [
-            "domain",
-            "solution_id",
-            "business_id"
-          ]
+          "description": "Populate this parameter from a context value ['domain', 'solution_id', 'business_id'] or from another input parameter."
         }
       }
     },
@@ -865,12 +800,7 @@
         },
         "x-exosite-from": {
           "type": "string",
-          "description": "Populate this parameter from a user context value.",
-          "enum": [
-            "domain",
-            "solution_id",
-            "business_id"
-          ]
+          "description": "Populate this parameter from a context value ['domain', 'solution_id', 'business_id'] or from another input parameter."
         }
       }
     },
@@ -974,12 +904,7 @@
         },
         "x-exosite-from": {
           "type": "string",
-          "description": "Populate this parameter from a user context value.",
-          "enum": [
-            "domain",
-            "solution_id",
-            "business_id"
-          ]
+          "description": "Populate this parameter from a context value ['domain', 'solution_id', 'business_id'] or from another input parameter."
         }
       }
     },
@@ -1485,7 +1410,7 @@
         },
         "x-exosite-from": {
           "type": "string",
-          "description": "Defines the the parameter name providing the api key if different from the header name."
+          "description": "Defines the the parameter name providing the api key, if different from the header name."
         },
         "x-exosite-internal-use": {
           "type": "boolean",
@@ -1657,6 +1582,10 @@
             "title": {
                 "type": "string"
             },
+            "name": {
+              "type": "string",
+              "description": "For config parameter only"
+            },
             "description": {
                 "type": "string"
             },
@@ -1714,7 +1643,15 @@
             },
             "maxProperties": { "$ref": "#/definitions/jsonSchema/definitions/positiveInteger" },
             "minProperties": { "$ref": "#/definitions/jsonSchema/definitions/positiveIntegerDefault0" },
-            "required": { "$ref": "#/definitions/jsonSchema/definitions/stringArray" },
+            "required": {
+              "anyOf": [
+                { "$ref": "#/definitions/jsonSchema/definitions/stringArray" },
+                {
+                  "type": "boolean",
+                  "description": "For config parameter only"
+                }
+              ]
+            },
             "additionalProperties": {
                 "anyOf": [
                     { "type": "boolean" },
