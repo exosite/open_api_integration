@@ -1,0 +1,74 @@
+swagger: "2.0"
+
+################################################################################
+#                           Service Metadata                                   #
+################################################################################
+info:
+  version: "1.0"
+  title: Signed Request Example
+  description: This example showcase Murano authenticated requests to https://requestbin.com/r/en0xqdd251y7a .
+  contact:
+    name: maintainer name
+    email: maintainer@email.com
+
+################################################################################
+#                            API Information                                   #
+################################################################################
+
+# A hostname with a valid, signed, and active TSL certificate is required.
+host: en0xqdd251y7a.x.pipedream.net
+basePath: /
+
+################################################################################
+#                                  Security                                    #
+################################################################################
+securityDefinitions:
+  signature:
+     # Signature Header, using Murano Services CA
+     # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#signature
+     type: signature
+     # name: signature # optional by default goint in signature header
+  clientCA:
+     # Client CA authentication, using Murano Services CA
+     # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#clientca
+     type: clientCA
+security:
+  - signature: []
+
+################################################################################
+#                                Operations                                    #
+################################################################################
+paths:
+  /:
+    get:
+      description: Signature
+      operationId: sign
+      parameters:
+        - name: param
+          type: string
+          description: A query parameter part of the signature
+          in: query
+      responses:
+        default:
+          description: Response
+    post:
+      description: Signature with Body
+      operationId: signBody
+      parameters:
+        - name: bodyParam
+          description: A body parameter which length is part of the signature
+          in: body
+          schema:
+            description: A body parameter which length is part of the signature
+            type: string
+      responses:
+        default:
+          description: Response
+    put:
+      description: Client certificate.
+      operationId: clientCA
+      security:
+        - clientCA: []
+      responses:
+        default:
+          description: Response
