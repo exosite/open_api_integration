@@ -22,6 +22,7 @@
       - [Signature](#signature)
       - [ClientCA](#clientca)
     - [Config Parameters](#config-parameters-object)
+    - [Define a token to access dispatcher](#define-a-token-to-access-dispatcher)
 
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
@@ -744,3 +745,64 @@ paths:
 The definitions section can be used by reference objects in order re-use specification code. If elements of the spec are copied and pasted more than once, they can be set here and reused.
 
 ----
+
+#### Define a Token to Access Dispatcher
+We allow services, which are published on Exosite Marketplace, to access [dispatcher APIs](https://pegasus-dispatcher.hosted.exosite.io).
+
+##### Step 1: define `x-exosite-token`
+In `schema`, add a attribute called `x-exosite-token`, the value can be any string,
+it will be used as the token when you try to call dispatcher.
+
+An example (refer to this [minimalservice.yaml](./examples/minimalservice.yaml)):
+```yaml
+# ...
+################################################################################
+#                            API Information                                   #
+################################################################################
+# ...
+x-exosite-token: "myprivatetoken"
+# ...
+```
+
+So, we defined a service called `minimalservice` and the token is `myprivatetoken`.
+
+##### Step 2: call dispatcher
+
+Add a header `authorization: minimalservice myprivatetoken` for all the following endpoints.
+
+- 2.1 call Event Trigger
+
+  base_url = https://pegasus-dispatcher.hosted.exosite.io
+
+  `GET/POST <base_url>/api/v1/trigger/:context_id/:service_alias/:event_type`
+
+  - context_id: the solution_id
+  - service_alias: which service you want to call, eg: tsdb
+  - event_type: which event to call, eg: export
+
+- 2.2 call Service Logs / Metrics
+
+  `GET/POST <base_url>/ws/service/:service/log`
+
+  `GET/POST <base_url>/ws/service/:service/metric/:metric`
+
+  If you want to use metric, please remember to define the `x-exosite-usage-metrics` along with `x-exosite-token`, if you don't define this, dispatcher will not add metrics for you.
+
+  An example of metrics definition:
+
+  ```yaml
+  x-exosite-usage-metrics:
+    bandwidth:
+      name: Data size downloaded
+      description: The number of bytes downloaded over a calendar month by devices of this product.
+      type: counter
+      unit: byte
+      categories:
+        in: Data uploaded
+        out: Data downloaded
+    size:
+      name: Data size stored
+      description: The number of bytes stored for this product.
+      type: gauge
+      unit: byte
+  ```
