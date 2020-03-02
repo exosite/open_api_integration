@@ -763,7 +763,8 @@ x-exosite-token: "myprivatetoken"
 # ...
 ```
 
-So, we defined a service called `minimalservice` and the token is `myprivatetoken`.
+Once the service swagger has been published and processed, the token will be removed and will not be accessible from Murano anymore. 
+So you MUST keep it securely saved. If you forget it you can overload the current token by updating the service swagger definition.
 
 ##### Step 2: call dispatcher
 
