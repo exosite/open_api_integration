@@ -751,7 +751,6 @@ We allow services, which are published on Exosite Marketplace, to access [dispat
 
 ##### Step 1: define `x-exosite-token`
 In `schema`, add a attribute called `x-exosite-token`, the value needs to be a **secure token**  provided when accessing the Murano Service API.
-it will be used as the token when you try to call dispatcher.
 
 An example (refer to this [minimalservice.yaml](./examples/minimalservice.yaml)):
 ```yaml
