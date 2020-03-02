@@ -768,7 +768,7 @@ So you MUST keep it securely saved. If you forget it you can overload the curren
 
 ##### Step 2: call dispatcher
 
-Add a header `authorization: minimalservice myprivatetoken` for all the following endpoints.
+Add the `authorization` header with value `<service alias> <token value>` (Example:  `authorization: minimalservice myprivatetoken`) for all calls to the Murano Service API endpoints.
 
 - 2.1 call Event Trigger
 
