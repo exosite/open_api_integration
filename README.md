@@ -786,7 +786,7 @@ Add the `authorization` header with value `<service alias> <token value>` (Examp
 
   `GET/POST <base_url>/ws/service/:service/metric/:metric`
 
-  If you want to use metric, please remember to define the `x-exosite-usage-metrics` along with `x-exosite-token`, if you don't define this, dispatcher will not add metrics for you.
+  If you want to use metric, please remember to define the `x-exosite-usage-metrics` along with `x-exosite-token`, if you don't define this, your connection to the metric endpoint will get rejected.
 
   An example of metrics definition:
 
