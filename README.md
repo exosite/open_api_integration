@@ -750,7 +750,7 @@ The definitions section can be used by reference objects in order re-use specifi
 We allow services, which are published on Exosite Marketplace, to access [dispatcher APIs](https://pegasus-dispatcher.hosted.exosite.io) using a security Token as defined in below steps.
 
 ##### Step 1: define `x-exosite-token`
-In `schema`, add a attribute called `x-exosite-token`, the value can be any string,
+In `schema`, add a attribute called `x-exosite-token`, the value needs to be a **secure token**  provided when accessing the Murano Service API.
 it will be used as the token when you try to call dispatcher.
 
 An example (refer to this [minimalservice.yaml](./examples/minimalservice.yaml)):
