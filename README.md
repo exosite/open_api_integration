@@ -772,7 +772,7 @@ Add the `authorization` header with value `<service alias> <token value>` (Examp
 
 - 2.1 call Event Trigger
 
-  base_url = https://pegasus-dispatcher.hosted.exosite.io
+  base_url = https://murano-service-api.hosted.exosite.io
 
   `GET/POST <base_url>/api/v1/trigger/:context_id/:service_alias/:event_type`
 
