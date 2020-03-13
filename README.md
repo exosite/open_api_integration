@@ -22,6 +22,7 @@
       - [Signature](#signature)
       - [ClientCA](#clientca)
     - [Config Parameters](#config-parameters-object)
+    - [Define a token to access dispatcher](#define-a-token-to-access-dispatcher)
 
 # Open API Integration
 [OpenAPI](https://www.openapis.org/) is the name of the initiative behind defining Swagger specification which describe a REST web-API.
@@ -128,6 +129,7 @@ Make some examples:
 | x-exosite-info              | string   | `'someInfo'`                                                | An operationId reference triggered by Murano to retrieve a subscription informations to return to the users.                                                                                                                                                                                                               |
 | x-exosite-update            | string   | `'someUpdate'`                                              | An operationId reference triggered by Murano when a user update the service configuration for this solution.                                                                                                                                                                                                               |
 | x-exosite-gc                | string   | `'someGc'`                                                  | An operationId reference triggered by Murano when a user un-subscribe to this service. Including when the related solution is deleted.                                                                                                                                                                                     |
+| x-exosite-token             | string   | `'mysecrettoken'`                                           | Token used when this service is trying to make a call to dispatcher public API. Include a header: `authorization: <service-alias> <token-value>` when making a request to public dispatcher API. |
 | x-exosite-config-parameters | [object] | [[`Config Parameters Object`](#config-parameters-object)] | An array of parameters (JSON schema) defining the data set in the service Configuration parameters field for this serviceconfig.(Service configuration parameters are used as default value during operation call from Lua script)                                                                                         |
 
 #### Optional Fields
@@ -743,3 +745,64 @@ paths:
 The definitions section can be used by reference objects in order re-use specification code. If elements of the spec are copied and pasted more than once, they can be set here and reused.
 
 ----
+
+#### Define a Token to Access Dispatcher
+We allow services, which are published on Exosite Marketplace, to access [dispatcher APIs](https://pegasus-dispatcher.hosted.exosite.io) using a security Token as defined in below steps.
+
+##### Step 1: define `x-exosite-token`
+In `schema`, add a attribute called `x-exosite-token`, the value needs to be a **secure token**  provided when accessing the Murano Service API.
+
+An example (refer to this [minimalservice.yaml](./examples/minimalservice.yaml)):
+```yaml
+# ...
+################################################################################
+#                            API Information                                   #
+################################################################################
+# ...
+x-exosite-token: "myprivatetoken"
+# ...
+```
+
+Once the service swagger has been published and processed, the token will be removed and will not be accessible from Murano anymore. 
+So you MUST keep it securely saved. If you forget it you can overload the current token by updating the service swagger definition.
+
+##### Step 2: call dispatcher
+
+Add the `authorization` header with value `<service alias> <token value>` (Example:  `authorization: minimalservice myprivatetoken`) for all calls to the Murano Service API endpoints.
+
+- 2.1 call Event Trigger
+
+  base_url = https://service-api.hosted.exosite.io
+
+  `GET/POST <base_url>/api/v1/trigger/:context_id/:service_alias/:event_type`
+
+  - context_id: the solution_id
+  - service_alias: which service you want to call, eg: tsdb
+  - event_type: which event to call, eg: export
+
+- 2.2 call Service Logs / Metrics
+
+  `GET/POST <base_url>/ws/service/:service/log`
+
+  `GET/POST <base_url>/ws/service/:service/metric/:metric`
+
+  If you want to use metric, please remember to define the `x-exosite-usage-metrics` along with `x-exosite-token`, if you don't define this, your connection to the metric endpoint will get rejected.
+
+  An example of metrics definition:
+
+  ```yaml
+  x-exosite-usage-metrics:
+    bandwidth:
+      name: Data size downloaded
+      description: The number of bytes downloaded over a calendar month by devices of this product.
+      type: counter
+      unit: byte
+      categories:
+        in: Data uploaded
+        out: Data downloaded
+    size:
+      name: Data size stored
+      description: The number of bytes stored for this product.
+      type: gauge
+      unit: byte
+  ```
