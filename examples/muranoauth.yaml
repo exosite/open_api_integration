@@ -18,6 +18,8 @@ info:
 # A hostname with a valid, signed, and active TSL certificate is required.
 host: en0xqdd251y7a.x.pipedream.net
 basePath: /
+schemes:
+  - https
 
 ################################################################################
 #                                  Security                                    #
