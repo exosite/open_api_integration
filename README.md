@@ -619,6 +619,85 @@ createServer({key, cert}, (req, res) => {
 }).listen(8000);
 ```
 
+###### AWS V4 Signature
+
+Murano support native AWS signature header construction, enable easy integration with any AWS services.
+See more info at https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html.
+
+To use it add the signature definition flag: `x-exosite-from: awsSigV4`
+
+To use it the request **MUST** provide `aws_key_id` & `aws_secret` along with the `aws_region` or `Region` as request parameters.
+Those parameters should be defined in the service [Config Parameters](#config-parameters-object) with the flag `x-exosite-restricted: true` for user input.
+
+*Example (can be added as is in your service swagger)*
+
+```
+host: "awsservicename.{aws_region}.amazonaws.com"
+x-exosite-config-parameters:
+  - name:         aws_key_id
+    title:        AWS Key ID
+    description:  Your AWS Access KEY ID
+    type:         string
+    required:     true
+  - name:         aws_secret
+    title:        AWS Secret
+    description:  Your AWS Access KEY Secret
+    type:         string
+    format:       password
+    required:     true
+  - name:         Region
+    title:        AWS Region
+    description:  Your AWS Region
+    type:         string
+    default:      us-west-1
+    enum:
+      - us-east-2
+      - us-east-1
+      - us-west-1
+      - us-west-2
+      - af-south-1
+      - ap-east-1
+      - ap-south-1
+      - ap-northeast-3
+      - ap-northeast-2
+      - ap-southeast-1
+      - ap-southeast-2
+      - ap-northeast-1
+      - ca-central-1
+      - cn-north-1
+      - cn-northwest-1
+      - eu-central-1
+      - eu-west-1
+      - eu-west-2
+      - eu-south-1
+      - eu-west-3
+      - eu-north-1
+      - me-south-1
+      - sa-east-1
+      - us-gov-east-1
+      - us-gov-west-1
+  securityDefinitions:
+    awsSigV4:
+      type: signature
+      x-exosite-from: awsSigV4
+  security:
+  - awsSigV4: []
+  parameters:
+    Region:
+      in: host
+      description: AWS region
+      name: Region
+      required: true
+      type: string
+paths:
+  "/#AwsOp":
+    parameters:
+    - "$ref": "#/parameters/Region"
+    get:
+      operationId: AwsOp
+      ...
+```
+
 ##### ClientCA
 
 Validating request from murano using client certificate.
@@ -763,7 +842,7 @@ x-exosite-token: "myprivatetoken"
 # ...
 ```
 
-Once the service swagger has been published and processed, the token will be removed and will not be accessible from Murano anymore. 
+Once the service swagger has been published and processed, the token will be removed and will not be accessible from Murano anymore.
 So you MUST keep it securely saved. If you forget it you can overload the current token by updating the service swagger definition.
 
 ##### Step 2: call dispatcher

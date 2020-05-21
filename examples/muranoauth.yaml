@@ -28,6 +28,9 @@ securityDefinitions:
      # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#signature
      type: signature
      # name: signature # optional by default goint in signature header
+     # To use AWS V4 signature (https://docs.aws.amazon.com/general/latest/gr/signature-version-4.html)
+     # add following option
+     # x-exosite-from: awsSigV4
   clientCA:
      # Client CA authentication, using Murano Services CA
      # See doc at https://github.com/exosite/open_api_integration/blob/master/README.md#clientca
